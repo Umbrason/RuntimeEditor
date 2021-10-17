@@ -24,9 +24,6 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     //when editor tab is dropped onto tab bar -> add to tabs
     //when editor tab is dropped onto viewport -> 1. instantiate new panel ("parent"). 2. make "parent"'s parent the same as this panels 3. parent this to "parent" 4.create new panel with only dropped editor tab and parent it to "parent". Set parent split-orientation and child-order according to drop position 
 
-    #region Template references
-    public GameObject TabLabelTemplate;
-    #endregion
 
     #region component References
     public LayoutElement layoutElement;
@@ -100,8 +97,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
         }
     }
-    private int selectedTab;
-    private Vector2 dragPointerOffset;
+    private int selectedTab;    
     #endregion
 
     public enum PanelRegion
@@ -111,68 +107,26 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     private void OnEnable()
     {
-        tabDropTarget.DropCallback.AddListener(OnDropTab);
-        viewportDropTarget.DropCallback.AddListener(OnDropViewport);
+        tabDropTarget.DropCallback.AddListener(OnDropTabListArea);
+        viewportDropTarget.DropCallback.AddListener(OnDropViewportArea);
     }
 
     private void OnDisable()
     {
-        tabDropTarget.DropCallback.RemoveListener(OnDropTab);
-        viewportDropTarget.DropCallback.RemoveListener(OnDropViewport);
+        tabDropTarget.DropCallback.RemoveListener(OnDropTabListArea);
+        viewportDropTarget.DropCallback.RemoveListener(OnDropViewportArea);
     }
 
-    private void InstantiateTabLabel(EditorTab tab)
-    {
-        var tabLabelInstance = Instantiate(TabLabelTemplate);
-        var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
-        var beginDrag = new EventTrigger.Entry()
-        {
-            eventID = EventTriggerType.BeginDrag
-        };
-        beginDrag.callback.AddListener((x) => BeginTabDrag(x as PointerEventData, tab));
-
-        var drag = new EventTrigger.Entry()
-        {
-            eventID = EventTriggerType.Drag
-        };
-        drag.callback.AddListener((x) => DragTab(x as PointerEventData, tab));
-
-        var endDrag = new EventTrigger.Entry()
-        {
-            eventID = EventTriggerType.EndDrag
-        };
-        endDrag.callback.AddListener((x) => EndTabDrag(x as PointerEventData, tab));
-
-        tabLabelEventTrigger.triggers.Add(beginDrag);
-        tabLabelEventTrigger.triggers.Add(drag);
-        tabLabelEventTrigger.triggers.Add(endDrag);
-    }
-
-    private void BeginTabDrag(PointerEventData eventData, EditorTab tab)
-    {
-        dragPointerOffset = eventData.position - (Vector2)RectTransform.position;
-    }
-
-    private void DragTab(PointerEventData eventData, EditorTab tab)
-    {
-        RectTransform.position = eventData.position + dragPointerOffset;
-    }
-
-    private void EndTabDrag(PointerEventData eventData, EditorTab tab)
-    {
-        Debug.Log($"ended dragging this ({gameObject.GetInstanceID()}) object");
-    }
-
-    private void OnDropTab(PointerEventData eventData)
-    {
-        var editorTab = eventData.pointerDrag.GetComponentInChildren<EditorTab>();
-        DockOtherTab(editorTab);
-    }
-
-    private void OnDropViewport(PointerEventData eventData)
+    private void OnDropViewportArea(PointerEventData eventData)
     {
         var panelRegion = GetPanelRegion(RectTransform.worldToLocalMatrix * eventData.position);
         Debug.Log($"dropped {eventData.pointerDrag} on {panelRegion} region");
+    }
+
+    private void OnDropTabListArea(PointerEventData eventData)
+    {
+        var editorTab = eventData.pointerDrag.GetComponentInChildren<EditorTab>();
+        DockOtherTab(editorTab);
     }
 
     private PanelRegion GetPanelRegion(Vector2 localPosition)
@@ -195,12 +149,12 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         if (tabs.Count > 0)
             return;
         children = (A, B);
-        
+
         SplitOrientation = splitOrientation;
         SplitPercent = splitPercent;
         A.parent = this;
         A.name = this.name + "A";
-        
+
         B.parent = this;
         B.name = this.name + "B";
         A.transform.SetParent(childContainer.transform);
@@ -235,14 +189,15 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     }
 
-    ///<summary></summary>
+    ///<summary>allows editor tab to separate from this panel</summary>
     public void SeparateEditorTab(EditorTab tab)
     {
         if (!tabs.Contains(tab))
             return;
         throw new NotImplementedException();
-    }
+    }    
 
+    ///<summary>handles dragging between panels to change split postion</summary>
     public void OnDrag(PointerEventData eventData)
     {
         if (HasChildren)

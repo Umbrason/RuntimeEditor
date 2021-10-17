@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.EventSystems;
 
-public class EditorWindowManager : MonoBehaviour
+public class RuntimeEditorWindowManager : MonoBehaviour
 {
-    private static EditorWindowManager singleton;
-    public static EditorWindowManager Singleton { get { return singleton; } }
+    private static RuntimeEditorWindowManager singleton;
+    public static RuntimeEditorWindowManager Singleton { get { return singleton; } }
 
     public GameObject DynamicPanelTemplate;
+    public GameObject EditorTabLabelTemplate;
     private DynamicPanel rootPanel;
 
     public static void LoadFromFile(string path)
@@ -86,5 +88,31 @@ public class EditorWindowManager : MonoBehaviour
             panelComponent.SetChildren(A, B, layoutTree.splitOrientation, layoutTree.splitPosition);
         }
         return panelComponent;
+    }
+    private void InstantiateTabLabel(EditorTab tab)
+    {        
+        var tabLabelInstance = Instantiate(EditorTabLabelTemplate);
+        var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
+        var beginDrag = new EventTrigger.Entry()
+        {
+            eventID = EventTriggerType.BeginDrag
+        };
+        beginDrag.callback.AddListener((x) => tab.BeginTabLabelDrag(x as PointerEventData));
+
+        var drag = new EventTrigger.Entry()
+        {
+            eventID = EventTriggerType.Drag
+        };
+        drag.callback.AddListener((x) => tab.DragTabLabel(x as PointerEventData));
+
+        var endDrag = new EventTrigger.Entry()
+        {
+            eventID = EventTriggerType.EndDrag
+        };
+        endDrag.callback.AddListener((x) => tab.EndTabLabelDrag(x as PointerEventData));
+
+        tabLabelEventTrigger.triggers.Add(beginDrag);
+        tabLabelEventTrigger.triggers.Add(drag);
+        tabLabelEventTrigger.triggers.Add(endDrag);
     }
 }
