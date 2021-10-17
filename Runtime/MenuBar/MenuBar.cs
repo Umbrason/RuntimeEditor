@@ -12,13 +12,12 @@ public class MenuBar : MonoBehaviour
     private bool expanded;
     public Transform content;
     private Queue<GameObject> categoryInstances = new Queue<GameObject>();
-    public GameObject optionTemplate, categoryTemplate, groupTemplate;
+    public GameObject optionTemplate, categoryTemplate, groupTemplate;    
 
     private Node root;
 
     private void OnEnable()
-    {
-        //content = transform.SearchFirstByName("content");
+    {        
         FetchOptionsFromAssembly();
         RefreshOptionsUI();
     }

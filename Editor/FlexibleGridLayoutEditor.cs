@@ -18,13 +18,13 @@ public class FlexibleGridLayoutEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("columns"));
         GUI.enabled = enableRows;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("rows"));
-
+        GUI.enabled = true;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("spacing"));
 
         var freeAspectProperty = serializedObject.FindProperty("freeAspect");
         EditorGUILayout.PropertyField(freeAspectProperty);
 
-        GUI.enabled = freeAspectProperty.boolValue;
+        GUI.enabled = !freeAspectProperty.boolValue;
         EditorGUILayout.PropertyField(serializedObject.FindProperty("aspectRatio"));
         GUI.enabled = true;
 

@@ -7,7 +7,7 @@ using System;
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class MenuOption : Attribute
     {
-        public string key;
+        public string key;        
         public Category category;
         public enum Category
         {

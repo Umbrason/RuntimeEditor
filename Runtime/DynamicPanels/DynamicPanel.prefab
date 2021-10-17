@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 18736427712684417}
-  - component: {fileID: 6868561787277264391}
+  - component: {fileID: 4649588698175725950}
   m_Layer: 0
   m_Name: Child Layout
   m_TagString: Untagged
@@ -36,7 +36,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6868561787277264391
+--- !u!114 &4649588698175725950
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 18736427712684422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 680ff2f2b2fa5e745aed19ef9539465c, type: 3}
+  m_Script: {fileID: 11500000, guid: a17978d2fab757c40a0735b72377c837, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -54,10 +54,10 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  fitType: 0
-  columns: 0
+  fitType: 1
+  columns: 2
   rows: 0
-  spacing: {x: 10, y: 10}
+  spacing: {x: 0, y: 0}
   freeAspect: 1
   aspectRatio: {x: 1, y: 1}
 --- !u!1 &18736428702289438
@@ -113,14 +113,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 832fb04dc2e062e4e8ec5ec5d5ac5ccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TabLabelTemplate: {fileID: 4600652827553757789, guid: fc5ecc17e9d424a45bb44ac7625b4a53, type: 3}
+  TabLabelTemplate: {fileID: 4600652827553757789, guid: fc5ecc17e9d424a45bb44ac7625b4a53,
+    type: 3}
   layoutElement: {fileID: 18736428702289434}
-  tabDropTarget: {fileID: 1964284303722632721}
-  viewportDropTarget: {fileID: 5876219996715309659}
+  tabDropTarget: {fileID: 3827220461680169019}
+  viewportDropTarget: {fileID: 737670473452703691}
   tabBar: {fileID: 2545071029672729109}
   viewport: {fileID: 4627247868174729026}
   childContainer: {fileID: 18736427712684422}
-  childLayout: {fileID: 6868561787277264391}
+  childLayout: {fileID: 4649588698175725950}
 --- !u!114 &18736428702289434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,7 +181,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 0
-  palette: {fileID: 11400000, guid: 3977c7de10e32cf418c89cdc1825320f, type: 2}
+  palette: {fileID: 0}
 --- !u!1 &18736428708738916
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,7 +195,7 @@ GameObject:
   - component: {fileID: 4813460151819020424}
   - component: {fileID: 4739939605604826613}
   - component: {fileID: 6766507213170248340}
-  - component: {fileID: 5876219996715309659}
+  - component: {fileID: 737670473452703691}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -278,7 +279,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 1
-  palette: {fileID: 11400000, guid: 3977c7de10e32cf418c89cdc1825320f, type: 2}
+  palette: {fileID: 0}
 --- !u!114 &4739939605604826613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,7 +308,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18736428708738916}
   m_CullTransparentMesh: 0
---- !u!114 &5876219996715309659
+--- !u!114 &737670473452703691
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -316,7 +317,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 18736428708738916}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54c443e30e21d7e4891c850f76b25241, type: 3}
+  m_Script: {fileID: 11500000, guid: b9272d9e028465246b87d0e6189714cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2545071029672729109
@@ -332,7 +333,7 @@ GameObject:
   - component: {fileID: 8393758695474505783}
   - component: {fileID: 8158231560655422264}
   - component: {fileID: 5773685036072093325}
-  - component: {fileID: 1964284303722632721}
+  - component: {fileID: 3827220461680169019}
   m_Layer: 0
   m_Name: Tabs
   m_TagString: Untagged
@@ -444,8 +445,8 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 2
-  palette: {fileID: 11400000, guid: 3977c7de10e32cf418c89cdc1825320f, type: 2}
---- !u!114 &1964284303722632721
+  palette: {fileID: 0}
+--- !u!114 &3827220461680169019
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -454,7 +455,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2545071029672729109}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54c443e30e21d7e4891c850f76b25241, type: 3}
+  m_Script: {fileID: 11500000, guid: b9272d9e028465246b87d0e6189714cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4627247868174729026
@@ -562,4 +563,4 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 1
-  palette: {fileID: 11400000, guid: 3977c7de10e32cf418c89cdc1825320f, type: 2}
+  palette: {fileID: 0}
