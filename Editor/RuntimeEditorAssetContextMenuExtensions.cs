@@ -18,6 +18,12 @@ public static class RuntimeEditorAssetContextMenuExtensions
         {
             var instance = GameObject.Instantiate(MenuBarTemplate, t);
             instance.name = "MenuBar";
+            foreach (var themedComponent in instance.GetComponentsInChildren<ThemedImage>())
+                themedComponent.palette = ThemedUIEditorUtility.ActivePalette;
+            foreach (var themedComponent in instance.GetComponentsInChildren<ThemedText>())
+                themedComponent.palette = ThemedUIEditorUtility.ActivePalette;
+            foreach (var themedComponent in instance.GetComponentsInChildren<ThemedTextMeshPro>())
+                themedComponent.palette = ThemedUIEditorUtility.ActivePalette;
             Undo.RegisterCreatedObjectUndo(instance, "create menuBar");
         };
 

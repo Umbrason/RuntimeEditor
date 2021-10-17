@@ -2,7 +2,8 @@
     "name": "Umbrason.DynamicPanelSystem.Runtime",
     "rootNamespace": "",
     "references": [
-        "GUID:f7eae8c8c3028c24492d28a794f46bef"
+        "GUID:f7eae8c8c3028c24492d28a794f46bef",
+        "GUID:61a2fc443e47e634c89b74efda26bbe5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
