@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using System;
 
 public class MenuBar : MonoBehaviour
 {
@@ -25,7 +26,8 @@ public class MenuBar : MonoBehaviour
     private void FetchOptionsFromAssembly()
     {
         root = new Node("Root", 0);
-        var types = GetType().Assembly.GetTypes();
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        var types = assemblies.Select((x) => x.GetTypes()).SelectMany(x => x).Distinct();
         foreach (var type in types)
         {
             foreach (var method in type.GetMethods())
