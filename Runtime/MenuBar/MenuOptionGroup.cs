@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine;
 
-namespace Game.Editor
-{
+
     public class MenuOptionGroup : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public Transform content;
@@ -33,4 +32,3 @@ namespace Game.Editor
             content.gameObject.SetActive(false);
         }
     }
-}

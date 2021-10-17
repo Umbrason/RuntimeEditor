@@ -21,9 +21,10 @@ public class EditorWindowManager : MonoBehaviour
     {
 
     }
-    
+
+    [MenuOption(MenuOption.Category.Layout, "Load")]
     public static void LoadFromFile(string path)
-    {                
+    {
         if (!SerializationManager.TryDeserialize<EditorLayoutTree>(path, out EditorLayoutTree layout))
             return;
         singleton?.SetLayout(layout);

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Game.Editor
-{
+
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class MenuOption : Attribute
     {
@@ -21,4 +20,3 @@ namespace Game.Editor
             this.category = category;
         }
     }
-}

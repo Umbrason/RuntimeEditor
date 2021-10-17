@@ -5,8 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace Game.Editor
-{
+
     public class MenuCategory : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
     {
         private bool expanded;
@@ -53,4 +52,3 @@ namespace Game.Editor
         }
     }
 
-}
