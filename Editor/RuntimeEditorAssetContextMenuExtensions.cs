@@ -36,7 +36,7 @@ public static class RuntimeEditorAssetContextMenuExtensions
         Undo.IncrementCurrentGroup();
     }
 
-    [MenuItem("GameObject/UI/MenuBar")]
+    [MenuItem("GameObject/UI/RuntimeEditor")]
     public static void InstantiateRuntimeEditorTemplate()
     {
         var selections = Selection.GetFiltered<GameObject>(SelectionMode.Editable);
