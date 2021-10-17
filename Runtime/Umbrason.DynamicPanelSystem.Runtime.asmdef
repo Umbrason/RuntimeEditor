@@ -1,0 +1,16 @@
+{
+    "name": "Umbrason.DynamicPanelSystem.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f7eae8c8c3028c24492d28a794f46bef"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

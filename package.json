@@ -1,0 +1,17 @@
+{
+  "name": "com.umbrason.runtimeeditor",
+  "version": "1.0.0",
+  "displayName": "Runtime Editor",
+  "description": "The 'Runtime Editor' package contains a custom UI framework for editing various objects at runtime",
+  "keywords": [
+    "UI"
+  ],
+  "author": {
+    "name": "Umbrason"
+  },
+  "hideInEditor": false,
+  "dependencies": {
+
+    "com.umbrason.runtimeserialization" : "1.0.0"
+  }
+}
