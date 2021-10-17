@@ -195,14 +195,18 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         if (tabs.Count > 0)
             return;
         children = (A, B);
+        
         SplitOrientation = splitOrientation;
         SplitPercent = splitPercent;
         A.parent = this;
         A.name = this.name + "A";
+        
         B.parent = this;
         B.name = this.name + "B";
         A.transform.SetParent(childContainer.transform);
+        A.transform.localScale = Vector3.one;
         B.transform.SetParent(childContainer.transform);
+        B.transform.localScale = Vector3.one;
         childContainer.SetActive(true);
         viewport.SetActive(false);
     }
