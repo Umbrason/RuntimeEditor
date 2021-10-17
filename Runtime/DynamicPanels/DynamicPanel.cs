@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -37,6 +38,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public FlexibleGridLayoutGroup childLayout;
 
     private List<EditorTab> tabs = new List<EditorTab>();
+    public string[] TabTypes { get { return tabs.Select((x) => x.GetType().ToString()).ToArray(); } }
     private Dictionary<EditorTab, EventTrigger> tabButtons = new Dictionary<EditorTab, EventTrigger>();
 
     private RectTransform _rectTransform;
@@ -45,6 +47,8 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     private DynamicPanel parent;
     public DynamicPanel Parent { get { return parent; } }
     private (DynamicPanel, DynamicPanel) children;
+    public DynamicPanel ChildA { get { return children.Item1; } }
+    public DynamicPanel ChildB { get { return children.Item2; } }
     public bool HasChildren { get { return children.Item1 != null && children.Item2 != null; } }
 
     #endregion

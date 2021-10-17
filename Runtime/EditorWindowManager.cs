@@ -7,21 +7,10 @@ public class EditorWindowManager : MonoBehaviour
 {
     private static EditorWindowManager singleton;
     public static EditorWindowManager Singleton { get { return singleton; } }
-    private EditorLayoutTree activeLayout;
 
     public GameObject DynamicPanelTemplate;
+    private DynamicPanel rootPanel;
 
-    private GameObject rootPanelLayout;
-
-    void OnEnable() => singleton = this;
-    void OnDisable() => singleton = singleton == this ? null : singleton;
-
-
-    public void RegisterEditorWindowInstance(EditorTab editorTab, string identifier)
-    {
-
-    }
-   
     public static void LoadFromFile(string path)
     {
         if (!SerializationManager.TryDeserialize<EditorLayoutTree>(path, out EditorLayoutTree layout))
@@ -29,19 +18,52 @@ public class EditorWindowManager : MonoBehaviour
         singleton?.SetLayout(layout);
     }
 
+    public static void SaveToFile(string path)
+    {
+        if (!singleton)
+            return;
+        SerializationManager.Serialize(LayoutFromDynamicPanel(singleton.rootPanel), path);
+    }
+
+    public static EditorLayoutTree LayoutFromDynamicPanel(DynamicPanel panel)
+    {
+        var layoutTree = new EditorLayoutTree();
+        layoutTree.splitOrientation = panel.SplitOrientation;
+        layoutTree.splitPosition = panel.SplitPercent;
+        if (layoutTree.IsLeaf)
+            layoutTree.dockedTabs = panel.TabTypes;
+        else
+        {
+            layoutTree.childA = LayoutFromDynamicPanel(panel.ChildA);
+            layoutTree.childB = LayoutFromDynamicPanel(panel.ChildB);
+        }
+        return layoutTree;
+    }
+
+    void OnEnable() => singleton = this;
+    void OnDisable() => singleton = singleton == this ? null : singleton;
+
+
+
+
+    public void RegisterEditorWindowInstance(EditorTab editorTab, string identifier)
+    {
+
+    }
+
     public void SetLayout(EditorLayoutTree layout)
     {
-        activeLayout = layout;
         DestroyPanelInstances();
-        rootPanelLayout = InstantiateLayoutRecursive(layout, transform).gameObject;
+        rootPanel = InstantiateLayoutRecursive(layout, transform);
     }
+
 
     public void DestroyPanelInstances()
     {
-        if (!rootPanelLayout)
+        if (!rootPanel)
             return;
-        Destroy(rootPanelLayout);
-        rootPanelLayout = null;
+        Destroy(rootPanel.gameObject);
+        rootPanel = null;
     }
 
     public DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
