@@ -76,7 +76,8 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         {
             foreach (var tabIdentifier in layoutTree.dockedTabs)
             {
-                var editorTab = EditorTabRegistry.InstantiateTabContent(tabIdentifier);
+                var editorTab = EditorTabRegistry.InstantiateTabContent(tabIdentifier, panelComponent.contentContainer.transform);
+                var tabLabel = InstantiateTabLabel(editorTab, panelComponent.tabContainer.transform);
             }
         }
         else if (layoutTree.childA != null && layoutTree.childB != null) //Instantiate children recursive
@@ -89,9 +90,9 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         }
         return panelComponent;
     }
-    private void InstantiateTabLabel(EditorTab tab)
-    {        
-        var tabLabelInstance = Instantiate(EditorTabLabelTemplate);
+    private GameObject InstantiateTabLabel(EditorTab tab, Transform parent = null)
+    {
+        var tabLabelInstance = Instantiate(EditorTabLabelTemplate, parent);
         var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
         var beginDrag = new EventTrigger.Entry()
         {
@@ -114,5 +115,6 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         tabLabelEventTrigger.triggers.Add(beginDrag);
         tabLabelEventTrigger.triggers.Add(drag);
         tabLabelEventTrigger.triggers.Add(endDrag);
+        return tabLabelInstance;
     }
 }

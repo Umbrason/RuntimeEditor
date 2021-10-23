@@ -561,8 +561,8 @@ MonoBehaviour:
   layoutElement: {fileID: 4218455073568422226}
   tabDropTarget: {fileID: 1140926518841059187}
   viewportDropTarget: {fileID: 3527687708952819843}
-  tabBar: {fileID: 1844662448579308893}
-  viewport: {fileID: 8862854611257083914}
+  tabContainer: {fileID: 1844662448579308893}
+  contentContainer: {fileID: 4218455073558003756}
   childContainer: {fileID: 4218455074759317198}
   childLayout: {fileID: 8813208490835891766}
 --- !u!114 &4218455073568422226

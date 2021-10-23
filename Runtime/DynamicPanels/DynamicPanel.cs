@@ -29,9 +29,9 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public LayoutElement layoutElement;
     public DropTarget tabDropTarget;
     public DropTarget viewportDropTarget;
-    public GameObject tabBar;
-    public GameObject viewport;
-    public GameObject childContainer;
+    public GameObject tabContainer;
+    public GameObject contentContainer;
+    public GameObject childContainer;    
     public FlexibleGridLayoutGroup childLayout;
 
     private List<EditorTab> tabs = new List<EditorTab>();
@@ -50,7 +50,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     #endregion
 
-    #region runtime-values
+    #region runtime_values
     private float _splitPercent = .5f;
     public float SplitPercent
     {
@@ -162,7 +162,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         B.transform.SetParent(childContainer.transform);
         B.transform.localScale = Vector3.one;
         childContainer.SetActive(true);
-        viewport.SetActive(false);
+        contentContainer.SetActive(false);
     }
 
     public void RemoveChild(DynamicPanel child)
@@ -173,7 +173,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         foreach (var tab in otherChild.tabs)
             DockOtherTab(tab);
         childContainer.SetActive(false);
-        viewport.SetActive(true);
+        contentContainer.SetActive(true);
     }
 
     ///<summary>Add new EditorTab to this panel</summary>
