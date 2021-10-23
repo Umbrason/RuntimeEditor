@@ -30,6 +30,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public DropTarget tabDropTarget;
     public DropTarget viewportDropTarget;
     public GameObject tabContainer;
+    public GameObject viewportContainer;
     public GameObject contentContainer;
     public GameObject childContainer;    
     public FlexibleGridLayoutGroup childLayout;
@@ -162,7 +163,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         B.transform.SetParent(childContainer.transform);
         B.transform.localScale = Vector3.one;
         childContainer.SetActive(true);
-        contentContainer.SetActive(false);
+        viewportContainer.SetActive(false);
     }
 
     public void RemoveChild(DynamicPanel child)
@@ -173,7 +174,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         foreach (var tab in otherChild.tabs)
             DockOtherTab(tab);
         childContainer.SetActive(false);
-        contentContainer.SetActive(true);
+        viewportContainer.SetActive(true);
     }
 
     ///<summary>Add new EditorTab to this panel</summary>

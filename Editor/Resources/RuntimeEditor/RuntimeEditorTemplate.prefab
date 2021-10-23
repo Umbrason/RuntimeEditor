@@ -67,7 +67,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 927c9cb9524c2e947b93ea729709dd65, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 12
     m_FontStyle: 0
     m_BestFit: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: Package
   colorIndex: 5
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!114 &3958719094349855467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,7 +208,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 3
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!114 &8790813417931910646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 2
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!114 &1140926518841059187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,7 +464,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 1
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!114 &8867521495899097789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -562,6 +562,7 @@ MonoBehaviour:
   tabDropTarget: {fileID: 1140926518841059187}
   viewportDropTarget: {fileID: 3527687708952819843}
   tabContainer: {fileID: 1844662448579308893}
+  viewportContainer: {fileID: 8862854611257083914}
   contentContainer: {fileID: 4218455073558003756}
   childContainer: {fileID: 4218455074759317198}
   childLayout: {fileID: 8813208490835891766}
@@ -624,7 +625,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 0
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!1 &4218455074759317198
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,7 +683,7 @@ MonoBehaviour:
   fitType: 1
   columns: 2
   rows: 0
-  spacing: {x: 0, y: 0}
+  spacing: {x: 5, y: 5}
   freeAspect: 1
   aspectRatio: {x: 1, y: 1}
 --- !u!1 &4235747756688885286
@@ -728,7 +729,7 @@ GameObject:
   - component: {fileID: 4235747757533041282}
   - component: {fileID: 4235747757533041285}
   m_Layer: 0
-  m_Name: RuntimeEditor
+  m_Name: RuntimeEditorTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -840,7 +841,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 4
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!114 &6588839629804485441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -966,4 +967,4 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 1
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}

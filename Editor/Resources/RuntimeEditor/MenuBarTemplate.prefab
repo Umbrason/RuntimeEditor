@@ -291,7 +291,7 @@ GameObject:
   - component: {fileID: 7673907893186268224}
   - component: {fileID: 7673907893186268225}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Themed Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -345,7 +345,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 927c9cb9524c2e947b93ea729709dd65, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
@@ -359,7 +359,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: File
   colorIndex: 0
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!1 &7673907893252361030
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +476,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   colorIndex: 3
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!1 &7673907893329118444
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +544,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 927c9cb9524c2e947b93ea729709dd65, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
@@ -558,7 +558,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: option
   colorIndex: 0
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!114 &7673907893329118432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,7 +722,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 3
   colorIndex: 4
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
 --- !u!1 &7673907893529700973
 GameObject:
   m_ObjectHideFlags: 0
@@ -1398,7 +1398,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 927c9cb9524c2e947b93ea729709dd65, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
@@ -1412,4 +1412,4 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: option
   colorIndex: 0
-  palette: {fileID: 0}
+  palette: {fileID: 11400000, guid: 0abddf7b56c2fb141b8bfba9936226f6, type: 2}
