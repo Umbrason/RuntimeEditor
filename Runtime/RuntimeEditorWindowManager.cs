@@ -32,7 +32,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         var layoutTree = new EditorLayoutTree();
         layoutTree.splitOrientation = panel.SplitOrientation;
         layoutTree.splitPosition = panel.SplitPercent;
-        if (layoutTree.IsLeaf)
+        if (!panel.HasChildren)
             layoutTree.dockedTabs = panel.TabTypes;
         else
         {
@@ -76,8 +76,8 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         {
             foreach (var tabIdentifier in layoutTree.dockedTabs)
             {
-                var editorTab = EditorTabRegistry.InstantiateTabContent(tabIdentifier, panelComponent.contentContainer.transform);
-                var tabLabel = InstantiateTabLabel(editorTab, panelComponent.tabContainer.transform);
+                var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent.contentContainer.transform);
+                Debug.Log($"Instantiate tab {tabIdentifier}");
             }
         }
         else if (layoutTree.childA != null && layoutTree.childB != null) //Instantiate children recursive
@@ -90,9 +90,28 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         }
         return panelComponent;
     }
-    private GameObject InstantiateTabLabel(EditorTab tab, Transform parent = null)
+
+    private EditorTab InstantiateEditorTab(string identifier, Transform contentContainer = null, Transform tabLabelContainer = null)
+    {        
+        var editorTabPrefab = EditorTabRegistry.GetPrefab(identifier);
+        var editorTabComponent = InstantiateEditorTabContent(editorTabPrefab, contentContainer);
+
+        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(identifier);
+        var editorTabLabelInstance = InstantiateEditorTabLabel(editorTabComponent, editorTabDescriptor, tabLabelContainer);
+        return editorTabComponent;
+    }
+    private EditorTab InstantiateEditorTabContent(GameObject editorPrefab, Transform contentContainer = null)
+    {
+        if (editorPrefab == null)
+            return null;
+        var editorInstance = GameObject.Instantiate(editorPrefab, contentContainer);
+        return editorInstance.GetComponent<EditorTab>();
+    }
+    private GameObject InstantiateEditorTabLabel(EditorTab tab, (string, Sprite) tabInfo, Transform parent = null)
     {
         var tabLabelInstance = Instantiate(EditorTabLabelTemplate, parent);
+        if (tab == null)
+            return tabLabelInstance;
         var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
         var beginDrag = new EventTrigger.Entry()
         {

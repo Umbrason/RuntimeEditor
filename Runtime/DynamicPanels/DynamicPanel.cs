@@ -51,7 +51,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     #endregion
 
-    #region runtime_values
+    #region runtime_values    
     private float _splitPercent = .5f;
     public float SplitPercent
     {
