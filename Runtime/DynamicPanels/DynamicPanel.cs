@@ -29,8 +29,8 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public LayoutElement layoutElement;
     public DropTarget tabDropTarget;
     public DropTarget viewportDropTarget;
-    public GameObject tabLabelContainer;
-    public GameObject contentContainer;
+    public GameObject editorTabLabelContainer;
+    public GameObject editorTabContentContainer;
     public GameObject viewportContainer;
     public GameObject childContainer;    
     public FlexibleGridLayoutGroup childLayout;
