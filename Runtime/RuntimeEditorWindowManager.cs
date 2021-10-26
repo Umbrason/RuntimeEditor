@@ -9,8 +9,9 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     private static RuntimeEditorWindowManager singleton;
     public static RuntimeEditorWindowManager Singleton { get { return singleton; } }
 
-    public GameObject DynamicPanelTemplate;
-    public GameObject EditorTabLabelTemplate;
+    public GameObject dynamicPanelTemplate;
+    public GameObject editorTabLabelTemplate;
+    public GameObject viewport;
     private DynamicPanel rootPanel;
 
     public static void LoadFromFile(string path)
@@ -56,7 +57,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     public void SetLayout(EditorLayoutTree layout)
     {
         DestroyPanelInstances();
-        rootPanel = InstantiateLayoutRecursive(layout, transform);
+        rootPanel = InstantiateLayoutRecursive(layout, viewport.transform);
     }
 
 
@@ -70,7 +71,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     public DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
     {
-        var GO = Instantiate(DynamicPanelTemplate, parent);
+        var GO = Instantiate(dynamicPanelTemplate, parent);
         var panelComponent = GO.GetComponent<DynamicPanel>();
         if (layoutTree.IsLeaf)
         {
@@ -109,7 +110,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     }
     private GameObject InstantiateEditorTabLabel(EditorTab tab, (string, Sprite) tabInfo, Transform parent = null)
     {
-        var tabLabelInstance = Instantiate(EditorTabLabelTemplate, parent);
+        var tabLabelInstance = Instantiate(editorTabLabelTemplate, parent);
         var nameTextComponent = tabLabelInstance.GetComponentsInChildren<ThemedText>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
         nameTextComponent.text = tabInfo.Item1;
         var iconImageComponent = tabLabelInstance.GetComponentsInChildren<ThemedImage>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
