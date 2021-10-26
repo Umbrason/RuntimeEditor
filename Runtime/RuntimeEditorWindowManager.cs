@@ -76,7 +76,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         {
             foreach (var tabIdentifier in layoutTree.dockedTabs)
             {
-                var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent.contentContainer.transform);
+                var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent.contentContainer.transform, panelComponent.tabContainer.transform);
                 Debug.Log($"Instantiate tab {tabIdentifier}");
             }
         }
@@ -92,7 +92,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     }
 
     private EditorTab InstantiateEditorTab(string identifier, Transform contentContainer = null, Transform tabLabelContainer = null)
-    {        
+    {
         var editorTabPrefab = EditorTabRegistry.GetPrefab(identifier);
         var editorTabComponent = InstantiateEditorTabContent(editorTabPrefab, contentContainer);
 
@@ -110,6 +110,10 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     private GameObject InstantiateEditorTabLabel(EditorTab tab, (string, Sprite) tabInfo, Transform parent = null)
     {
         var tabLabelInstance = Instantiate(EditorTabLabelTemplate, parent);
+        var nameTextComponent = tabLabelInstance.GetComponentsInChildren<ThemedText>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
+        nameTextComponent.text = tabInfo.Item1;
+        var iconImageComponent = tabLabelInstance.GetComponentsInChildren<ThemedImage>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
+        iconImageComponent.sprite = tabInfo.Item2;
         if (tab == null)
             return tabLabelInstance;
         var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
