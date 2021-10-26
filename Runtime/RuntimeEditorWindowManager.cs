@@ -11,7 +11,8 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     public GameObject dynamicPanelTemplate;
     public GameObject editorTabLabelTemplate;
-    public GameObject viewport;
+    public GameObject viewportContainer;
+    public Transform ViewportTransform { get { return viewportContainer ? viewportContainer.transform : transform; } }
     private DynamicPanel rootPanel;
 
     public static void LoadFromFile(string path)
@@ -57,7 +58,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     public void SetLayout(EditorLayoutTree layout)
     {
         DestroyPanelInstances();
-        rootPanel = InstantiateLayoutRecursive(layout, viewport.transform);
+        rootPanel = InstantiateLayoutRecursive(layout, ViewportTransform);
     }
 
 
