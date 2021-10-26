@@ -78,7 +78,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         {
             foreach (var tabIdentifier in layoutTree.dockedTabs)
             {
-                var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent.contentContainer.transform, panelComponent.tabContainer.transform);
+                var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent);
                 Debug.Log($"Instantiate tab {tabIdentifier}");
             }
         }
@@ -93,49 +93,51 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         return panelComponent;
     }
 
-    private EditorTab InstantiateEditorTab(string identifier, Transform contentContainer = null, Transform tabLabelContainer = null)
+    private EditorTab InstantiateEditorTab(string identifier, DynamicPanel panel)
     {
         var editorTabPrefab = EditorTabRegistry.GetPrefab(identifier);
-        var editorTabComponent = InstantiateEditorTabContent(editorTabPrefab, contentContainer);
+        var editorTabComponent = InstantiateEditorTabContent(editorTabPrefab, panel);
 
         var editorTabDescriptor = EditorTabRegistry.GetDescriptor(identifier);
-        var editorTabLabelInstance = InstantiateEditorTabLabel(editorTabComponent, editorTabDescriptor, tabLabelContainer);
+        var editorTabLabelInstance = InstantiateEditorTabLabel(editorTabDescriptor, panel);
         return editorTabComponent;
     }
-    private EditorTab InstantiateEditorTabContent(GameObject editorPrefab, Transform contentContainer = null)
+    private EditorTab InstantiateEditorTabContent(GameObject editorPrefab, DynamicPanel panel)
     {
         if (editorPrefab == null)
             return null;
-        var editorInstance = GameObject.Instantiate(editorPrefab, contentContainer);
+        var editorInstance = GameObject.Instantiate(editorPrefab, panel.editorTabContentContainer.transform);
         return editorInstance.GetComponent<EditorTab>();
     }
-    private GameObject InstantiateEditorTabLabel(EditorTab tab, (string, Sprite) tabInfo, Transform parent = null)
+    private GameObject InstantiateEditorTabLabel((string, Sprite) tabInfo, DynamicPanel panel)
     {
-        var tabLabelInstance = Instantiate(editorTabLabelTemplate, parent);
+        if (tabInfo.Item1 == null)
+            return null;
+        var tabLabelInstance = Instantiate(editorTabLabelTemplate, panel.editorTabLabelContainer.transform);
         var nameTextComponent = tabLabelInstance.GetComponentsInChildren<ThemedText>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
         nameTextComponent.text = tabInfo.Item1;
         var iconImageComponent = tabLabelInstance.GetComponentsInChildren<ThemedImage>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
         iconImageComponent.sprite = tabInfo.Item2;
-        if (tab == null)
+        if (panel == null)
             return tabLabelInstance;
         var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
         var beginDrag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.BeginDrag
         };
-        beginDrag.callback.AddListener((x) => tab.BeginTabLabelDrag(x as PointerEventData));
+        beginDrag.callback.AddListener((x) => panel.BeginTabLabelDrag(x as PointerEventData));
 
         var drag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.Drag
         };
-        drag.callback.AddListener((x) => tab.DragTabLabel(x as PointerEventData));
+        drag.callback.AddListener((x) => panel.DragTabLabel(x as PointerEventData));
 
         var endDrag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.EndDrag
         };
-        endDrag.callback.AddListener((x) => tab.EndTabLabelDrag(x as PointerEventData));
+        endDrag.callback.AddListener((x) => panel.EndTabLabelDrag(x as PointerEventData));
 
         tabLabelEventTrigger.triggers.Add(beginDrag);
         tabLabelEventTrigger.triggers.Add(drag);

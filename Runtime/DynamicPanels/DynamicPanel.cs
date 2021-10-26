@@ -29,9 +29,9 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public LayoutElement layoutElement;
     public DropTarget tabDropTarget;
     public DropTarget viewportDropTarget;
-    public GameObject tabContainer;
-    public GameObject viewportContainer;
+    public GameObject tabLabelContainer;
     public GameObject contentContainer;
+    public GameObject viewportContainer;
     public GameObject childContainer;    
     public FlexibleGridLayoutGroup childLayout;
 
@@ -144,6 +144,19 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
             return PanelRegion.Bottom;
         return PanelRegion.Center;
     }
+
+    #region Label Drag Mechanic
+    private RectTransform labelTransform;
+    private Vector2 dragPointerOffset;
+    public void BeginTabLabelDrag(PointerEventData eventData)
+        => dragPointerOffset = eventData.position - (Vector2)labelTransform.position;
+
+    public void DragTabLabel(PointerEventData eventData)
+        => labelTransform.position = eventData.position + dragPointerOffset;
+
+    public void EndTabLabelDrag(PointerEventData eventData)
+        => Debug.Log($"ended dragging this ({gameObject.GetInstanceID()}) object");
+    #endregion
 
     public void SetChildren(DynamicPanel A, DynamicPanel B, SplitOrientation splitOrientation = SplitOrientation.Horizontal, float splitPercent = .5f)
     {
