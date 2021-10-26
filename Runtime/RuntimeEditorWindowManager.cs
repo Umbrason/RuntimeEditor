@@ -121,23 +121,24 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         if (panel == null)
             return tabLabelInstance;
         var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
+        var tabLabelRectTransform = tabLabelInstance.GetComponent<RectTransform>();
         var beginDrag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.BeginDrag
         };
-        beginDrag.callback.AddListener((x) => panel.BeginTabLabelDrag(x as PointerEventData));
+        beginDrag.callback.AddListener((x) => panel.BeginTabLabelDrag(x as PointerEventData, tabLabelRectTransform));
 
         var drag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.Drag
         };
-        drag.callback.AddListener((x) => panel.DragTabLabel(x as PointerEventData));
+        drag.callback.AddListener((x) => panel.DragTabLabel(x as PointerEventData, tabLabelRectTransform));
 
         var endDrag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.EndDrag
         };
-        endDrag.callback.AddListener((x) => panel.EndTabLabelDrag(x as PointerEventData));
+        endDrag.callback.AddListener((x) => panel.EndTabLabelDrag(x as PointerEventData, tabLabelRectTransform));
 
         tabLabelEventTrigger.triggers.Add(beginDrag);
         tabLabelEventTrigger.triggers.Add(drag);

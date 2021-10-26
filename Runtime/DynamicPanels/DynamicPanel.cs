@@ -145,16 +145,15 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         return PanelRegion.Center;
     }
 
-    #region Label Drag Mechanic
-    private RectTransform labelTransform;
+    #region Label Drag Mechanic    
     private Vector2 dragPointerOffset;
-    public void BeginTabLabelDrag(PointerEventData eventData)
+    public void BeginTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
         => dragPointerOffset = eventData.position - (Vector2)labelTransform.position;
 
-    public void DragTabLabel(PointerEventData eventData)
+    public void DragTabLabel(PointerEventData eventData, RectTransform labelTransform)
         => labelTransform.position = eventData.position + dragPointerOffset;
 
-    public void EndTabLabelDrag(PointerEventData eventData)
+    public void EndTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
         => Debug.Log($"ended dragging this ({gameObject.GetInstanceID()}) object");
     #endregion
 
