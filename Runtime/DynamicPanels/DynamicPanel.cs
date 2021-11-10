@@ -32,7 +32,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public GameObject editorTabLabelContainer;
     public GameObject editorTabContentContainer;
     public GameObject viewportContainer;
-    public GameObject childContainer;    
+    public GameObject childContainer;
     public FlexibleGridLayoutGroup childLayout;
 
     private List<EditorTab> tabs = new List<EditorTab>();
@@ -98,7 +98,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
         }
     }
-    private int selectedTab;    
+    private int selectedTab;
     #endregion
 
     public enum PanelRegion
@@ -145,8 +145,11 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         return PanelRegion.Center;
     }
 
+
+    //needs to be on the top level to allow for rendering the label on top (could have a new label dedicated to being dragged like the context menu -> similar to VS code tab drag) 
     #region Label Drag Mechanic    
     private Vector2 dragPointerOffset;
+
     public void BeginTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
         => dragPointerOffset = eventData.position - (Vector2)labelTransform.position;
 
@@ -155,6 +158,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     public void EndTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
         => Debug.Log($"ended dragging this ({gameObject.GetInstanceID()}) object");
+
     #endregion
 
     public void SetChildren(DynamicPanel A, DynamicPanel B, SplitOrientation splitOrientation = SplitOrientation.Horizontal, float splitPercent = .5f)
@@ -208,7 +212,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         if (!tabs.Contains(tab))
             return;
         throw new NotImplementedException();
-    }    
+    }
 
     ///<summary>handles dragging between panels to change split postion</summary>
     public void OnDrag(PointerEventData eventData)

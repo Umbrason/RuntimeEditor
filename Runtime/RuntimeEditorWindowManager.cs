@@ -11,10 +11,16 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     public GameObject dynamicPanelTemplate;
     public GameObject editorTabLabelTemplate;
-    public GameObject viewportContainer;
+    public GameObject viewportContainer;    
     public Transform ViewportTransform { get { return viewportContainer ? viewportContainer.transform : transform; } }
     private DynamicPanel rootPanel;
 
+    #region tab dragging
+    private Vector3 dragOffset;
+    public GameObject editorTabLabel;
+    #endregion
+
+    #region (de)serialization
     public static void LoadFromFile(string path)
     {
         if (!SerializationManager.TryDeserialize<EditorLayoutTree>(path, out EditorLayoutTree layout))
@@ -43,31 +49,10 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         }
         return layoutTree;
     }
-
-    void OnEnable() => singleton = this;
-    void OnDisable() => singleton = singleton == this ? null : singleton;
-
-
-
-
-    public void RegisterEditorWindowInstance(EditorTab editorTab, string identifier)
-    {
-
-    }
-
     public void SetLayout(EditorLayoutTree layout)
     {
         DestroyPanelInstances();
         rootPanel = InstantiateLayoutRecursive(layout, ViewportTransform);
-    }
-
-
-    public void DestroyPanelInstances()
-    {
-        if (!rootPanel)
-            return;
-        Destroy(rootPanel.gameObject);
-        rootPanel = null;
     }
 
     public DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
@@ -92,6 +77,20 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         }
         return panelComponent;
     }
+    #endregion
+
+    void OnEnable() => singleton = this;
+    void OnDisable() => singleton = singleton == this ? null : singleton;
+
+
+    #region Tab Creation/Destruction
+    public void DestroyPanelInstances()
+    {
+        if (!rootPanel)
+            return;
+        Destroy(rootPanel.gameObject);
+        rootPanel = null;
+    }
 
     private EditorTab InstantiateEditorTab(string identifier, DynamicPanel panel)
     {
@@ -114,9 +113,9 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         if (tabInfo.Item1 == null)
             return null;
         var tabLabelInstance = Instantiate(editorTabLabelTemplate, panel.editorTabLabelContainer.transform);
-        var nameTextComponent = tabLabelInstance.GetComponentsInChildren<ThemedText>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
+        var nameTextComponent = tabLabelInstance.GetComponentsInChildren<ThemedText>().FirstOrDefault((x => x.gameObject.name.ToLower().Contains("name")));
         nameTextComponent.text = tabInfo.Item1;
-        var iconImageComponent = tabLabelInstance.GetComponentsInChildren<ThemedImage>().FirstOrDefault((x => x.gameObject != tabLabelInstance));
+        var iconImageComponent = tabLabelInstance.GetComponentsInChildren<ThemedImage>().FirstOrDefault((x => x.gameObject.name.ToLower().Contains("icon")));
         iconImageComponent.sprite = tabInfo.Item2;
         if (panel == null)
             return tabLabelInstance;
@@ -145,4 +144,5 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         tabLabelEventTrigger.triggers.Add(endDrag);
         return tabLabelInstance;
     }
+    #endregion
 }
