@@ -25,17 +25,17 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     {
         if (!SerializationManager.TryDeserialize<EditorLayoutTree>(path, out EditorLayoutTree layout))
             return;
-        singleton?.SetLayout(layout);
+        singleton?.SetLayoutFromLayoutTree(layout);
     }
 
     public static void SaveToFile(string path)
     {
         if (!singleton)
             return;
-        SerializationManager.Serialize(LayoutFromDynamicPanel(singleton.rootPanel), path);
+        SerializationManager.Serialize(GetLayoutFromDynamicPanel(singleton.rootPanel), path);
     }
 
-    public static EditorLayoutTree LayoutFromDynamicPanel(DynamicPanel panel)
+    private static EditorLayoutTree GetLayoutFromDynamicPanel(DynamicPanel panel)
     {
         var layoutTree = new EditorLayoutTree();
         layoutTree.splitOrientation = panel.SplitOrientation;
@@ -44,18 +44,18 @@ public class RuntimeEditorWindowManager : MonoBehaviour
             layoutTree.dockedTabs = panel.TabTypes;
         else
         {
-            layoutTree.childA = LayoutFromDynamicPanel(panel.ChildA);
-            layoutTree.childB = LayoutFromDynamicPanel(panel.ChildB);
+            layoutTree.childA = GetLayoutFromDynamicPanel(panel.ChildA);
+            layoutTree.childB = GetLayoutFromDynamicPanel(panel.ChildB);
         }
         return layoutTree;
     }
-    public void SetLayout(EditorLayoutTree layout)
+    private void SetLayoutFromLayoutTree(EditorLayoutTree layout)
     {
         DestroyPanelInstances();
         rootPanel = InstantiateLayoutRecursive(layout, ViewportTransform);
     }
 
-    public DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
+    private DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
     {
         var GO = Instantiate(dynamicPanelTemplate, parent);
         var panelComponent = GO.GetComponent<DynamicPanel>();

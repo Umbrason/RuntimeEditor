@@ -9,18 +9,26 @@ using System;
 
 public class MenuBar : MonoBehaviour
 {
+    private static MenuBar m_Singleton;
+    public static MenuBar Singleton { get { return m_Singleton; } }
+
     private bool expanded;
     public Transform content;
     private Queue<GameObject> categoryInstances = new Queue<GameObject>();
-    public GameObject optionTemplate, categoryTemplate, groupTemplate;    
-
+    public GameObject optionTemplate, categoryTemplate, groupTemplate;
+    private Dictionary<(MenuOption.Category, string), Node> dynamicNodes = new Dictionary<(MenuOption.Category, string), Node>();
     private Node root;
 
     private void OnEnable()
-    {        
+    {
+        enabled = (this == (m_Singleton ??= this));
+        if (!enabled)
+            return;
         FetchOptionsFromAssembly();
         RefreshOptionsUI();
     }
+
+    private void OnDisable() => m_Singleton = this == m_Singleton ? null : m_Singleton;
 
     private void FetchOptionsFromAssembly()
     {
@@ -47,25 +55,72 @@ public class MenuBar : MonoBehaviour
         }
     }
 
-    private void AddOption(string path, MenuOption.Category category, UnityAction callback)
+    public void AddDynamicNode(string path, MenuOption.Category category, UnityAction callback)
+    {
+        if (dynamicNodes.ContainsKey((category, path)))
+            return;
+        dynamicNodes.Add((category, path), AddOption(path, category, callback));
+        RefreshOptionsUI();
+    }
+
+    public void RemoveDynamicNode(string path, MenuOption.Category category)
+    {
+        if (!dynamicNodes.ContainsKey((category, path)))
+            return;
+        RemoveOption(path, category);
+        dynamicNodes.Remove((category, path));
+        RefreshOptionsUI();
+    }
+
+    private Node AddOption(string path, MenuOption.Category category, UnityAction callback)
+    {
+        var keys = path.Split('/');
+        var pathQueue = new Queue<string>(keys);
+        var parentNode = root;
+        //Traverse or Append
+        while (pathQueue.Count > 1)
+        {
+            var key = pathQueue.Dequeue();
+            if (parentNode.children.Any((x) => x.key == key))
+                parentNode = parentNode.children.Single((x) => x.key == key);
+            else
+            {
+                var child = new Node(key, category);
+                parentNode.children.Add(child);
+                parentNode = child;
+            }
+        }
+        var node = new Node(pathQueue.Dequeue(), category, callback);
+        parentNode.children.Add(parentNode);
+        return node;
+    }
+
+    private void RemoveOption(string path, MenuOption.Category category)
     {
         var keys = path.Split('/');
         var pathQueue = new Queue<string>(keys);
         var node = root;
+        var parentStack = new Stack<Node>();
         //Traverse or Append
         while (pathQueue.Count > 1)
         {
             var key = pathQueue.Dequeue();
             if (node.children.Any((x) => x.key == key))
-                node = node.children.Single((x) => x.key == key);
-            else
             {
-                var child = new Node(key, category);
-                node.children.Add(child);
-                node = child;
+                node = node.children.Single((x) => x.key == key);
+                parentStack.Push(node);
             }
+            else break;
         }
-        node.children.Add(new Node(pathQueue.Dequeue(), category, callback));
+        //Clear node and potential empty parents
+        while (parentStack.Count > 0)
+        {
+            var child = node;
+            if (node.children.Count > 0 || node.HasOptionCallback)
+                break;
+            node = parentStack.Pop();
+            node.children.Remove(node);
+        }
     }
 
     private void RefreshOptionsUI()
