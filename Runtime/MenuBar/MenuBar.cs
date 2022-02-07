@@ -21,7 +21,8 @@ public class MenuBar : MonoBehaviour
 
     private void OnEnable()
     {
-        enabled = (this == (m_Singleton ??= this));
+        m_Singleton ??= this;
+        enabled = this == m_Singleton;
         if (!enabled)
             return;
         FetchOptionsFromAssembly();
