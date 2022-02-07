@@ -92,7 +92,7 @@ public class MenuBar : MonoBehaviour
             }
         }
         var node = new Node(pathQueue.Dequeue(), category, callback);
-        parentNode.children.Add(parentNode);
+        parentNode.children.Add(node);
         return node;
     }
 
