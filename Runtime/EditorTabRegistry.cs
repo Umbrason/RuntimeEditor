@@ -18,8 +18,8 @@ public static class EditorTabRegistry
         var editorTabTypes = types.Where(x => !x.IsAbstract && x.IsSubclassOf(typeof(EditorTab)));
         foreach (var type in editorTabTypes)
         {
-            var prefab = Resources.Load<GameObject>($"EditorTabs/{type.Name}/Prefab");
-            var sprite = Resources.Load<Sprite>($"EditorTabs/{type.Name}/Icon");
+            var prefab = Resources.Load<GameObject>($"EditorTabs/{type.Name}/{type.Name}_Prefab");
+            var sprite = Resources.Load<Sprite>($"EditorTabs/{type.Name}/{type.Name}_Icon");
             if (prefab == null || sprite == null)
             {
                 Debug.LogWarning($"missing assets for editor tab {type.Name}: {(prefab == null ? "prefab " : "")}{(sprite == null ? "sprite" : "")} \n add the missing assets to Resources/EditorTabs/{type.Name}");
