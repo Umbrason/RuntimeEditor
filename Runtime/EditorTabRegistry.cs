@@ -22,7 +22,7 @@ public static class EditorTabRegistry
             var sprite = Resources.Load<Sprite>($"EditorTabs/{type.Name}/{type.Name}_Icon");
             if (prefab == null || sprite == null)
             {
-                Debug.LogWarning($"missing assets for editor tab {type.Name}: {(prefab == null ? "prefab " : "")}{(sprite == null ? "sprite" : "")} \n add the missing assets to Resources/EditorTabs/{type.Name}");
+                Debug.LogWarning($"missing assets for editor tab {type.Name}: {(prefab == null ? $"{type.Name}_Prefab " : "")}{(sprite == null ? $"{type.Name}_Icon" : "")} \n add the missing assets to Resources/EditorTabs/{type.Name}");
                 continue;
             }
             dict[type.Name] = (prefab, sprite);
