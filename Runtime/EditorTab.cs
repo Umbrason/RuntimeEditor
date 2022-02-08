@@ -14,9 +14,5 @@ public abstract class EditorTab : MonoBehaviour
         m_currentPanel = panel;
         labelGO.transform.SetParent(panel.editorTabLabelContainer.transform);
         transform.SetParent(panel.editorTabContentContainer.transform);
-    }
-
-    public abstract void OnShow();
-    public abstract void OnHide();
-    public abstract void OnCreate();
+    }    
 }

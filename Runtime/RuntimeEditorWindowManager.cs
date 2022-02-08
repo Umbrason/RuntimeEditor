@@ -41,7 +41,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         layoutTree.splitOrientation = panel.SplitOrientation;
         layoutTree.splitPosition = panel.SplitPercent;
         if (!panel.HasChildren)
-            layoutTree.dockedTabs = panel.TabTypes;
+            layoutTree.dockedTabs = panel.DockedTabTypes;
         else
         {
             layoutTree.childA = GetLayoutFromDynamicPanel(panel.ChildA);

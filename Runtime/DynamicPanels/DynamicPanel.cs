@@ -36,7 +36,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public FlexibleGridLayoutGroup childLayout;
 
     private List<EditorTab> tabs = new List<EditorTab>();
-    public string[] TabTypes { get { return tabs.Select((x) => x.GetType().ToString()).ToArray(); } }
+    public string[] DockedTabTypes { get { return tabs.Select((x) => x.GetType().ToString()).ToArray(); } }
     private Dictionary<EditorTab, EventTrigger> tabButtons = new Dictionary<EditorTab, EventTrigger>();
 
     private RectTransform _rectTransform;
@@ -204,7 +204,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     public void Split(EditorTab other, PanelRegion splitDirection)
     {
-        
+
     }
 
     public void SelectTab(EditorTab tab)
