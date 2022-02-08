@@ -36,7 +36,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public FlexibleGridLayoutGroup childLayout;
 
     private List<EditorTab> tabs = new List<EditorTab>();
-    public string[] DockedTabTypes { get { return tabs.Select((x) => x.GetType().ToString()).ToArray(); } }
+    public Type[] DockedTabTypes { get { return tabs.Select((x) => x.GetType()).ToArray(); } }
     private Dictionary<EditorTab, EventTrigger> tabButtons = new Dictionary<EditorTab, EventTrigger>();
 
     private RectTransform _rectTransform;

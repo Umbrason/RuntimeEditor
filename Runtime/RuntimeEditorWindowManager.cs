@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.EventSystems;
+using System;
 
 public class RuntimeEditorWindowManager : MonoBehaviour
 {
@@ -61,11 +62,11 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         var panelComponent = GO.GetComponent<DynamicPanel>();
         if (layoutTree.IsLeaf)
         {
-            foreach (var tabIdentifier in layoutTree.dockedTabs)
+            foreach (var tabType in layoutTree.dockedTabs)
             {
-                var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent);
+                var editorTab = InstantiateEditorTab(tabType, panelComponent);
                 panelComponent.AppendTab(editorTab);
-                Debug.Log($"Instantiate tab {tabIdentifier}");
+                Debug.Log($"Instantiate tab {tabType}");
             }
         }
         else if (layoutTree.childA != null && layoutTree.childB != null) //Instantiate children recursive
@@ -93,17 +94,17 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         rootPanel = null;
     }
 
-    private EditorTab InstantiateEditorTab(string identifier, DynamicPanel panel)
+    private EditorTab InstantiateEditorTab(Type editorType, DynamicPanel panel)
     {
         //Instantiate Editor
-        var editorTabPrefab = EditorTabRegistry.GetPrefab(identifier);
+        var editorTabPrefab = EditorTabRegistry.GetPrefab(editorType);
         if (editorTabPrefab == null)
             return null;
         var editorInstance = GameObject.Instantiate(editorTabPrefab, panel.editorTabContentContainer.transform);
         var editorTabComponent = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
-        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(identifier);
+        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorType);
         editorTabComponent.labelGO = InstantiateEditorTabLabel(editorTabDescriptor, editorTabComponent, panel);
 
         return editorTabComponent;
