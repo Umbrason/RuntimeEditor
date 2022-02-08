@@ -196,7 +196,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     ///<summary>Add new EditorTab to this panel</summary>
     public void AppendTab(EditorTab tab)
     {
-        if (HasChildren || tabs.Contains(tab))
+        if (!tab || HasChildren || tabs.Contains(tab))
             return;
         tabs.Add(tab);
         tab.MoveToPanel(this);
