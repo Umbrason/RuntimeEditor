@@ -13,7 +13,7 @@ public class EditorLayoutTree
     public float splitPosition; //position of split between child A and child B. e.g. .5f, .3f, .7f
     public SplitOrientation splitOrientation;
 
-    public Type[] dockedTabs = new Type[0];
+    public string[] dockedTabs = new string[0];
 
 
 }

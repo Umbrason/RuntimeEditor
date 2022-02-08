@@ -42,7 +42,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         layoutTree.splitOrientation = panel.SplitOrientation;
         layoutTree.splitPosition = panel.SplitPercent;
         if (!panel.HasChildren)
-            layoutTree.dockedTabs = panel.DockedTabTypes;
+            layoutTree.dockedTabs = panel.DockedTabNames;
         else
         {
             layoutTree.childA = GetLayoutFromDynamicPanel(panel.ChildA);
@@ -62,11 +62,11 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         var panelComponent = GO.GetComponent<DynamicPanel>();
         if (layoutTree.IsLeaf)
         {
-            foreach (var tabType in layoutTree.dockedTabs)
+            foreach (var editorTabName in layoutTree.dockedTabs)
             {
-                var editorTab = InstantiateEditorTab(tabType, panelComponent);
+                var editorTab = InstantiateEditorTab(editorTabName, panelComponent);
                 panelComponent.AppendTab(editorTab);
-                Debug.Log($"Instantiate tab {tabType}");
+                Debug.Log($"Instantiate tab {editorTabName}");
             }
         }
         else if (layoutTree.childA != null && layoutTree.childB != null) //Instantiate children recursive
@@ -94,17 +94,17 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         rootPanel = null;
     }
 
-    private EditorTab InstantiateEditorTab(Type editorType, DynamicPanel panel)
+    private EditorTab InstantiateEditorTab(string editorTabName, DynamicPanel panel)
     {
         //Instantiate Editor
-        var editorTabPrefab = EditorTabRegistry.GetPrefab(editorType);
+        var editorTabPrefab = EditorTabRegistry.GetPrefab(editorTabName);
         if (editorTabPrefab == null)
             return null;
         var editorInstance = GameObject.Instantiate(editorTabPrefab, panel.editorTabContentContainer.transform);
         var editorTabComponent = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
-        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorType);
+        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorTabName);
         editorTabComponent.labelGO = InstantiateEditorTabLabel(editorTabDescriptor, editorTabComponent, panel);
 
         return editorTabComponent;
