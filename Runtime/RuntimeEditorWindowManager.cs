@@ -11,7 +11,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     public GameObject dynamicPanelTemplate;
     public GameObject editorTabLabelTemplate;
-    public GameObject viewportContainer;    
+    public GameObject viewportContainer;
     public Transform ViewportTransform { get { return viewportContainer ? viewportContainer.transform : transform; } }
     private DynamicPanel rootPanel;
 
@@ -64,6 +64,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
             foreach (var tabIdentifier in layoutTree.dockedTabs)
             {
                 var editorTab = InstantiateEditorTab(tabIdentifier, panelComponent);
+                panelComponent.AppendTab(editorTab);
                 Debug.Log($"Instantiate tab {tabIdentifier}");
             }
         }
@@ -94,21 +95,21 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     private EditorTab InstantiateEditorTab(string identifier, DynamicPanel panel)
     {
+        //Instantiate Editor
         var editorTabPrefab = EditorTabRegistry.GetPrefab(identifier);
-        var editorTabComponent = InstantiateEditorTabContent(editorTabPrefab, panel);
+        if (editorTabPrefab == null)
+            return null;
+        var editorInstance = GameObject.Instantiate(editorTabPrefab, panel.editorTabContentContainer.transform);
+        var editorTabComponent = editorInstance.GetComponent<EditorTab>();
 
+        //Instantiate Label
         var editorTabDescriptor = EditorTabRegistry.GetDescriptor(identifier);
-        var editorTabLabelInstance = InstantiateEditorTabLabel(editorTabDescriptor, panel);
+        editorTabComponent.labelGO = InstantiateEditorTabLabel(editorTabDescriptor, editorTabComponent, panel);
+
         return editorTabComponent;
     }
-    private EditorTab InstantiateEditorTabContent(GameObject editorPrefab, DynamicPanel panel)
-    {
-        if (editorPrefab == null)
-            return null;
-        var editorInstance = GameObject.Instantiate(editorPrefab, panel.editorTabContentContainer.transform);
-        return editorInstance.GetComponent<EditorTab>();
-    }
-    private GameObject InstantiateEditorTabLabel((string, Sprite) tabInfo, DynamicPanel panel)
+
+    private GameObject InstantiateEditorTabLabel((string, Sprite) tabInfo, EditorTab tab, DynamicPanel panel)
     {
         if (tabInfo.Item1 == null)
             return null;
@@ -121,27 +122,36 @@ public class RuntimeEditorWindowManager : MonoBehaviour
             return tabLabelInstance;
         var tabLabelEventTrigger = tabLabelInstance.GetComponent<EventTrigger>();
         var tabLabelRectTransform = tabLabelInstance.GetComponent<RectTransform>();
+
+        var onClick = new EventTrigger.Entry()
+        {
+            eventID = EventTriggerType.PointerClick
+        };
+        onClick.callback.AddListener((x) => tab.CurrentPanel.SelectTab(tab));
+
         var beginDrag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.BeginDrag
         };
-        beginDrag.callback.AddListener((x) => panel.BeginTabLabelDrag(x as PointerEventData, tabLabelRectTransform));
+        beginDrag.callback.AddListener((x) => tab.CurrentPanel.BeginTabLabelDrag(x as PointerEventData, tabLabelRectTransform));
 
         var drag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.Drag
         };
-        drag.callback.AddListener((x) => panel.DragTabLabel(x as PointerEventData, tabLabelRectTransform));
+        drag.callback.AddListener((x) => tab.CurrentPanel.DragTabLabel(x as PointerEventData, tabLabelRectTransform));
 
         var endDrag = new EventTrigger.Entry()
         {
             eventID = EventTriggerType.EndDrag
         };
-        endDrag.callback.AddListener((x) => panel.EndTabLabelDrag(x as PointerEventData, tabLabelRectTransform));
+        endDrag.callback.AddListener((x) => tab.CurrentPanel.EndTabLabelDrag(x as PointerEventData, tabLabelRectTransform));
 
+        tabLabelEventTrigger.triggers.Add(onClick);
         tabLabelEventTrigger.triggers.Add(beginDrag);
         tabLabelEventTrigger.triggers.Add(drag);
         tabLabelEventTrigger.triggers.Add(endDrag);
+
         return tabLabelInstance;
     }
     #endregion

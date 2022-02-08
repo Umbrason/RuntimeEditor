@@ -48,10 +48,11 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     public DynamicPanel ChildA { get { return children.Item1; } }
     public DynamicPanel ChildB { get { return children.Item2; } }
     public bool HasChildren { get { return children.Item1 != null && children.Item2 != null; } }
+    public bool IsLeaf { get { return !HasChildren; } }
 
     #endregion
 
-    #region runtime_values    
+    #region runtime_values
     private float _splitPercent = .5f;
     public float SplitPercent
     {
@@ -127,7 +128,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     private void OnDropTabListArea(PointerEventData eventData)
     {
         var editorTab = eventData.pointerDrag.GetComponentInChildren<EditorTab>();
-        DockOtherTab(editorTab);
+        AppendTab(editorTab);
     }
 
     private PanelRegion GetPanelRegion(Vector2 localPosition)
@@ -158,7 +159,6 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     public void EndTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
         => Debug.Log($"ended dragging this ({gameObject.GetInstanceID()}) object");
-
     #endregion
 
     public void SetChildren(DynamicPanel A, DynamicPanel B, SplitOrientation splitOrientation = SplitOrientation.Horizontal, float splitPercent = .5f)
@@ -188,22 +188,33 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
             return;
         DynamicPanel otherChild = children.Item1 != child ? children.Item1 : children.Item2;
         foreach (var tab in otherChild.tabs)
-            DockOtherTab(tab);
+            AppendTab(tab);
         childContainer.SetActive(false);
         viewportContainer.SetActive(true);
     }
 
     ///<summary>Add new EditorTab to this panel</summary>
-    public void DockOtherTab(EditorTab other)
+    public void AppendTab(EditorTab tab)
     {
-        if (tabs.Contains(other))
+        if (HasChildren || tabs.Contains(tab))
             return;
-        //copy GO from other to this
+        tabs.Add(tab);
+        tab.MoveToPanel(this);
     }
 
     public void Split(EditorTab other, PanelRegion splitDirection)
     {
+        
+    }
 
+    public void SelectTab(EditorTab tab)
+    {
+        if (!tabs.Contains(tab))
+            return;
+        int index = tabs.IndexOf(tab);
+        selectedTab = index;
+        for (int i = 0; i < tabs.Count; i++)
+            tabs[i].gameObject.SetActive(i == index);
     }
 
     ///<summary>allows editor tab to separate from this panel</summary>
