@@ -105,7 +105,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
         //Instantiate Label
         var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorTabName);
-        editorTabComponent.labelGO = InstantiateEditorTabLabel(editorTabDescriptor, editorTabComponent, panel);
+        editorTabComponent.RegisterTabLabel(InstantiateEditorTabLabel(editorTabDescriptor, editorTabComponent, panel));
 
         return editorTabComponent;
     }

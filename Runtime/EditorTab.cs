@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 
 public abstract class EditorTab : MonoBehaviour
 {
-    public GameObject labelGO;
+    private GameObject labelGO;
+    public GameObject LabelGO { get { return labelGO; } }
     private DynamicPanel m_currentPanel;
     public DynamicPanel CurrentPanel { get { return m_currentPanel; } }
 
@@ -14,5 +12,11 @@ public abstract class EditorTab : MonoBehaviour
         m_currentPanel = panel;
         labelGO.transform.SetParent(panel.editorTabLabelContainer.transform);
         transform.SetParent(panel.editorTabContentContainer.transform);
-    }    
+    }
+
+    public void RegisterTabLabel(GameObject GO)
+    {
+        if (labelGO) Debug.LogError("Already has a label assigned");
+        labelGO ??= GO;
+    }
 }
