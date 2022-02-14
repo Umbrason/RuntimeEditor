@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 
 [RequireComponent(typeof(RectTransform))]
-public class DynamicPanel : MonoBehaviour, IDragHandler
+public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
 {
     //can resize -> two modes: window, docked. when docked just let parent handle relative size. 
     //parent has following layout: child A, child B.
@@ -22,21 +22,20 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     //can split off editor tab into new panel
 
     //when editor tab is dropped onto tab bar -> add to tabs
-    //when editor tab is dropped onto viewport -> 1. instantiate new panel ("parent"). 2. make "parent"'s parent the same as this panels 3. parent this to "parent" 4.create new panel with only dropped editor tab and parent it to "parent". Set parent split-orientation and child-order according to drop position 
-
+    //when editor tab is dropped onto viewport -> 1. instantiate new panel ("parent"). 2. make "parent"'s parent the same as this panels 3. parent this to "parent" 4.create new panel with only dropped editor tab and parent it to "parent". Set parent split-orientation and child-order according to drop position     
 
     #region component References
     public LayoutElement layoutElement;
-    public DropTarget tabDropTarget;
-    public DropTarget viewportDropTarget;
+    public DropTarget tabBarDropTarget;
+    public DropTarget tabViewportDropTarget;
     public GameObject editorTabLabelContainer;
     public GameObject editorTabContentContainer;
     public GameObject viewportContainer;
     public GameObject childContainer;
     public FlexibleGridLayoutGroup childLayout;
 
-    private List<EditorTab> tabs = new List<EditorTab>();
-    public string[] DockedTabNames { get { return tabs.Select((x) => x.GetType().Name).ToArray(); } }
+    private List<EditorTab> editorTabs = new List<EditorTab>();
+    public string[] DockedTabNames { get { return editorTabs.Select((x) => x.GetType().Name).ToArray(); } }
     private Dictionary<EditorTab, EventTrigger> tabButtons = new Dictionary<EditorTab, EventTrigger>();
 
     private RectTransform _rectTransform;
@@ -53,13 +52,14 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     #endregion
 
     #region runtime_values
+
     private float _splitPercent = .5f;
     public float SplitPercent
     {
         get { return _splitPercent; }
         set
         {
-            _splitPercent = value;
+            _splitPercent = Mathf.Clamp01(value * 1.2f - .1f) * .8f + .1f;
             if (!HasChildren)
                 return;
             switch (_splitOrientation)
@@ -100,7 +100,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         }
     }
     private int selectedTab;
-    #endregion
+    #endregion    
 
     public enum PanelRegion
     {
@@ -109,31 +109,35 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     private void OnEnable()
     {
-        tabDropTarget.DropCallback.AddListener(OnDropTabListArea);
-        viewportDropTarget.DropCallback.AddListener(OnDropViewportArea);
+        tabViewportDropTarget.DropCallback.AddListener(OnDropViewportArea);
+        tabBarDropTarget.DropCallback.AddListener(OnDropTabListArea);
     }
 
     private void OnDisable()
     {
-        tabDropTarget.DropCallback.RemoveListener(OnDropTabListArea);
-        viewportDropTarget.DropCallback.RemoveListener(OnDropViewportArea);
+        tabViewportDropTarget.DropCallback.RemoveListener(OnDropViewportArea);
+        tabBarDropTarget.DropCallback.RemoveListener(OnDropTabListArea);
+    }
+
+
+    private void OnDropTabListArea(PointerEventData eventData)
+    {
+        var tabLabel = eventData.pointerDrag.GetComponent<EditorTabLabel>();
+        if (!tabLabel) return;
+        AppendTab(tabLabel.Tab);
     }
 
     private void OnDropViewportArea(PointerEventData eventData)
     {
+        var tabLabel = eventData.pointerDrag.GetComponent<EditorTabLabel>();
+        if (!tabLabel) return;
         var panelRegion = GetPanelRegion(RectTransform.worldToLocalMatrix * eventData.position);
         Debug.Log($"dropped {eventData.pointerDrag} on {panelRegion} region");
     }
 
-    private void OnDropTabListArea(PointerEventData eventData)
-    {
-        var editorTab = eventData.pointerDrag.GetComponentInChildren<EditorTab>();
-        AppendTab(editorTab);
-    }
-
     private PanelRegion GetPanelRegion(Vector2 localPosition)
     {
-        Vector2 normalizedPosition = localPosition / tabDropTarget.WorldSpaceRect.size;
+        Vector2 normalizedPosition = localPosition / tabBarDropTarget.WorldSpaceRect.size;
         var margin = 0.25f;
         if (normalizedPosition.x < margin)
             return PanelRegion.Left;
@@ -146,24 +150,17 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         return PanelRegion.Center;
     }
 
-
-    //needs to be on the top level to allow for rendering the label on top (could have a new label dedicated to being dragged like the context menu -> similar to VS code tab drag) 
-    #region Label Drag Mechanic    
-    private Vector2 dragPointerOffset;
-
-    public void BeginTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
-        => dragPointerOffset = eventData.position - (Vector2)labelTransform.position;
-
-    public void DragTabLabel(PointerEventData eventData, RectTransform labelTransform)
-        => labelTransform.position = eventData.position + dragPointerOffset;
-
-    public void EndTabLabelDrag(PointerEventData eventData, RectTransform labelTransform)
-        => Debug.Log($"ended dragging this ({gameObject.GetInstanceID()}) object");
-    #endregion
+    public EditorTab GetEditorTab(string typeName) => editorTabs.Where(x => x.GetType().Name == typeName).SingleOrDefault();
+    public EditorTab GetEditorTabInChildren(string typeName)
+    {
+        if (IsLeaf) return GetEditorTab(typeName);
+        var childATab = ChildA.GetEditorTabInChildren(typeName);
+        return childATab ? childATab : ChildB.GetEditorTabInChildren(typeName);
+    }
 
     public void SetChildren(DynamicPanel A, DynamicPanel B, SplitOrientation splitOrientation = SplitOrientation.Horizontal, float splitPercent = .5f)
     {
-        if (tabs.Count > 0)
+        if (editorTabs.Count > 0)
             return;
         children = (A, B);
 
@@ -187,7 +184,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
         if (children.Item1 != child && children.Item2 != child)
             return;
         DynamicPanel otherChild = children.Item1 != child ? children.Item1 : children.Item2;
-        foreach (var tab in otherChild.tabs)
+        foreach (var tab in otherChild.editorTabs)
             AppendTab(tab);
         childContainer.SetActive(false);
         viewportContainer.SetActive(true);
@@ -196,10 +193,18 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
     ///<summary>Add new EditorTab to this panel</summary>
     public void AppendTab(EditorTab tab)
     {
-        if (!tab || HasChildren || tabs.Contains(tab))
+        if (!tab || HasChildren)
             return;
-        tabs.Add(tab);
+        tab.CurrentPanel?.DetachTab(tab);
+        editorTabs.Add(tab);
         tab.MoveToPanel(this);
+    }
+
+    private void DetachTab(EditorTab tab)
+    {
+        if (!tab || !editorTabs.Contains(tab))
+            return;
+        editorTabs.Remove(tab);
     }
 
     public void Split(EditorTab other, PanelRegion splitDirection)
@@ -209,18 +214,18 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
 
     public void SelectTab(EditorTab tab)
     {
-        if (!tabs.Contains(tab))
+        if (!editorTabs.Contains(tab))
             return;
-        int index = tabs.IndexOf(tab);
+        int index = editorTabs.IndexOf(tab);
         selectedTab = index;
-        for (int i = 0; i < tabs.Count; i++)
-            tabs[i].gameObject.SetActive(i == index);
+        for (int i = 0; i < editorTabs.Count; i++)
+            editorTabs[i].gameObject.SetActive(i == index);
     }
 
     ///<summary>allows editor tab to separate from this panel</summary>
     public void SeparateEditorTab(EditorTab tab)
     {
-        if (!tabs.Contains(tab))
+        if (!editorTabs.Contains(tab))
             return;
         throw new NotImplementedException();
     }
@@ -243,4 +248,6 @@ public class DynamicPanel : MonoBehaviour, IDragHandler
             }
         }
     }
+
+    public void OnPointerClick(PointerEventData eventData) => RuntimeEditorWindowManager.Singleton.SelectedLeafPanel = this.IsLeaf ? this : RuntimeEditorWindowManager.Singleton.SelectedLeafPanel;
 }

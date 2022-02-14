@@ -10,9 +10,9 @@ public class DropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
     public readonly UnityEvent<PointerEventData> DropCallback = new UnityEvent<PointerEventData>();
     public readonly UnityEvent<PointerEventData> PointerEnterCallback = new UnityEvent<PointerEventData>();
     public readonly UnityEvent<PointerEventData> PointerExitCallback = new UnityEvent<PointerEventData>();
-    public void OnDrop(PointerEventData eventData) => DropCallback.Invoke(eventData);
-    public void OnPointerEnter(PointerEventData eventData) => PointerEnterCallback.Invoke(eventData);
-    public void OnPointerExit(PointerEventData eventData) => PointerExitCallback.Invoke(eventData);
+    public void OnDrop(PointerEventData eventData) => DropCallback?.Invoke(eventData);
+    public void OnPointerEnter(PointerEventData eventData) => PointerEnterCallback?.Invoke(eventData);
+    public void OnPointerExit(PointerEventData eventData) => PointerExitCallback?.Invoke(eventData);
 
     private RectTransform rectTransform;
     private RectTransform RectTransform { get { return rectTransform ??= GetComponent<RectTransform>(); } }
@@ -22,6 +22,8 @@ public class DropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
 
     private Rect GetRect()
     {
+        if (!RectTransform.hasChanged && worldSpaceRect.HasValue)
+            return worldSpaceRect.Value;
         var corners = new Vector3[4];
         RectTransform.GetWorldCorners(corners);
         var min = corners[0];

@@ -9,7 +9,7 @@ public static class EditorTabRegistry
 {
     private static Dictionary<string, (GameObject, Sprite)> m_editorInfoRegistry;
     private static Dictionary<string, (GameObject, Sprite)> EditorInfoRegistry { get { return m_editorInfoRegistry ??= BuildInfoRegistryFromAssembly(); } }
-    
+
     private static Dictionary<string, (GameObject, Sprite)> BuildInfoRegistryFromAssembly()
     {
         var dict = new Dictionary<string, (GameObject, Sprite)>();
@@ -30,26 +30,29 @@ public static class EditorTabRegistry
         return dict;
     }
 
-    public static Sprite GetIcon(string editorTabName)
+    public static Sprite GetIcon(Type editorTabType) => GetIcon(editorTabType.Name);
+    public static Sprite GetIcon(string editorTabTypeName)
     {
-        if (!EditorInfoRegistry.ContainsKey(editorTabName))
+        if (!EditorInfoRegistry.ContainsKey(editorTabTypeName))
             return null;
-        return EditorInfoRegistry[editorTabName].Item2;
+        return EditorInfoRegistry[editorTabTypeName].Item2;
     }
 
-    public static GameObject GetPrefab(string editorTabName)
+    public static GameObject GetPrefab(Type editorTabType) => GetPrefab(editorTabType.Name);
+    public static GameObject GetPrefab(string editorTabTypeName)
     {
-        if (!EditorInfoRegistry.ContainsKey(editorTabName))
+        if (!EditorInfoRegistry.ContainsKey(editorTabTypeName))
             return null;
-        return EditorInfoRegistry[editorTabName].Item1;
+        return EditorInfoRegistry[editorTabTypeName].Item1;
     }
 
-    public static (string, Sprite) GetDescriptor(string editorTabName)
+    public static (string, Sprite) GetDescriptor(Type editorTabType) => GetDescriptor(editorTabType.Name);
+    public static (string, Sprite) GetDescriptor(string editorTabTypeName)
     {
-        if (!EditorInfoRegistry.ContainsKey(editorTabName))
+        if (!EditorInfoRegistry.ContainsKey(editorTabTypeName))
             return ("null", Sprite.Create(Texture2D.blackTexture, new Rect(0, 0, 1, 1), Vector2.one * .5f));
-        var val = EditorInfoRegistry[editorTabName];
-        return (editorTabName, val.Item2);
+        var val = EditorInfoRegistry[editorTabTypeName];
+        return (editorTabTypeName, val.Item2);
     }
 }
 

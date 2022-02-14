@@ -2,21 +2,23 @@
 
 public abstract class EditorTab : MonoBehaviour
 {
-    private GameObject labelGO;
-    public GameObject LabelGO { get { return labelGO; } }
+    private EditorTabLabel m_label;
+    public EditorTabLabel Label { get { return m_label; } }
     private DynamicPanel m_currentPanel;
     public DynamicPanel CurrentPanel { get { return m_currentPanel; } }
 
     public void MoveToPanel(DynamicPanel panel)
     {
         m_currentPanel = panel;
-        labelGO.transform.SetParent(panel.editorTabLabelContainer.transform);
+        m_label.transform.SetParent(null);
+        m_label.transform.SetParent(panel.editorTabLabelContainer.transform);
         transform.SetParent(panel.editorTabContentContainer.transform);
     }
 
-    public void RegisterTabLabel(GameObject GO)
+    public void RegisterTabLabel(EditorTabLabel tabLabel)
     {
-        if (labelGO) Debug.LogError("Already has a label assigned");
-        labelGO ??= GO;
+        if (m_label) { Debug.LogError("Already has a label assigned"); return; }
+        m_label = tabLabel;
+        m_label.Tab = this;
     }
 }
