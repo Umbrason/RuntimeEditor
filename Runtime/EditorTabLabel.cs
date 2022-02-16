@@ -8,10 +8,14 @@ public class EditorTabLabel : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
 {
     private EditorTab m_tab;
     public EditorTab Tab { get { return m_tab; } set { m_tab ??= value; } }
-    private RectTransform m_rectTransform;
-    public RectTransform RectTransform { get { return m_rectTransform ??= GetComponent<RectTransform>(); } }
-    private CanvasGroup m_CanvasGroup;
-    public CanvasGroup CanvasGroup { get { return m_CanvasGroup ??= GetComponent<CanvasGroup>(); } }
+    private RectTransform cached_rectTransform;
+    public RectTransform RectTransform { get { return cached_rectTransform ??= GetComponent<RectTransform>(); } }
+
+    private LayoutElement cached_LayoutElement;
+    public LayoutElement LayoutElement { get { return cached_LayoutElement ??= GetComponent<LayoutElement>(); } }
+
+    private CanvasGroup cached_CanvasGroup;
+    public CanvasGroup CanvasGroup { get { return cached_CanvasGroup ??= GetComponent<CanvasGroup>(); } }
 
     private Vector2 dragPointerOffset;
     private Transform preDragParentTransform;
@@ -23,6 +27,7 @@ public class EditorTabLabel : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         CanvasGroup.blocksRaycasts = false;
         dragPointerOffset = (Vector2)RectTransform.position - eventData.position;
         preDragParentTransform = transform.parent;
+        LayoutElement.ignoreLayout = true;
     }
     public void OnDrag(PointerEventData eventData) => RectTransform.position = eventData.position /*+dragPointerOffset*/;
     public void OnEndDrag(PointerEventData eventData)
@@ -31,6 +36,7 @@ public class EditorTabLabel : MonoBehaviour, IDragHandler, IBeginDragHandler, IE
         CanvasGroup.blocksRaycasts = true;
         if (transform.parent != preDragParentTransform)
             return;
+        LayoutElement.ignoreLayout = false;
         transform.SetParent(null);
         transform.SetParent(preDragParentTransform);
     }

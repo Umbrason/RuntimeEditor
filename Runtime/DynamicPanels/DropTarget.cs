@@ -5,13 +5,15 @@ using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(RectTransform))]
-public class DropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+public class DropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
 {
     public readonly UnityEvent<PointerEventData> DropCallback = new UnityEvent<PointerEventData>();
     public readonly UnityEvent<PointerEventData> PointerEnterCallback = new UnityEvent<PointerEventData>();
+    public readonly UnityEvent<PointerEventData> PointerMoveCallback = new UnityEvent<PointerEventData>();
     public readonly UnityEvent<PointerEventData> PointerExitCallback = new UnityEvent<PointerEventData>();
     public void OnDrop(PointerEventData eventData) => DropCallback?.Invoke(eventData);
     public void OnPointerEnter(PointerEventData eventData) => PointerEnterCallback?.Invoke(eventData);
+    public void OnPointerMove(PointerEventData eventData) => PointerMoveCallback?.Invoke(eventData);
     public void OnPointerExit(PointerEventData eventData) => PointerExitCallback?.Invoke(eventData);
 
     private RectTransform rectTransform;
@@ -37,4 +39,6 @@ public class DropTarget : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPo
         var size = max - min;
         return new Rect(position, size);
     }
+
+    
 }

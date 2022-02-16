@@ -19,7 +19,7 @@ using UnityEngine;
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            HideOptions();
+            CloseOptions();
         }
 
         private void ShowOptions()
@@ -27,8 +27,9 @@ using UnityEngine;
             content.gameObject.SetActive(true);
         }
 
-        private void HideOptions()
+        private void CloseOptions()
         {
             content.gameObject.SetActive(false);
         }
+
     }

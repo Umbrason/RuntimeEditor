@@ -20,12 +20,9 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     public Transform ViewportTransform { get { return viewportContainer ? viewportContainer.transform : transform; } }
     private DynamicPanel rootPanel;
     private DynamicPanel m_selectedLeafPanel;
-    public DynamicPanel SelectedLeafPanel { get { return m_selectedLeafPanel = (m_selectedLeafPanel && m_selectedLeafPanel.IsLeaf) ? m_selectedLeafPanel : null; } set { m_selectedLeafPanel = value.IsLeaf ? value : m_selectedLeafPanel; } }
+    public DynamicPanel SelectedLeafPanel { get { return m_selectedLeafPanel = (m_selectedLeafPanel && m_selectedLeafPanel.IsLeaf) ? m_selectedLeafPanel : null; } set { m_selectedLeafPanel = value && value.IsLeaf ? value : m_selectedLeafPanel; } }
 
-    #region tab dragging
-    private Vector3 dragOffset;
-    public GameObject editorTabLabel;
-    #endregion
+    void Start() { rootPanel = InstantiateLayoutRecursive(new EditorLayoutTree(), ViewportTransform); SelectedLeafPanel = rootPanel; }
 
     #region (de)serialization
     public static void LoadFromFile(string path)
@@ -56,10 +53,25 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         }
         return layoutTree;
     }
+
     private void SetLayoutFromLayoutTree(EditorLayoutTree layout)
     {
-        DestroyPanelInstances();
+        DestroyAllPanelInstances();
         rootPanel = InstantiateLayoutRecursive(layout, ViewportTransform);
+    }
+
+    public void SplitPanelInTwo(DynamicPanel panel, EditorTab[] panelATabs, EditorTab[] panelBTabs, float splitPercent, SplitOrientation splitOrientation)
+    {
+        
+    }
+
+    public void MergePanels(DynamicPanel A, DynamicPanel B)
+    {
+        if (A.Parent != B.Parent)
+            return;
+        var parent = A.Parent;
+        SelectedLeafPanel = SelectedLeafPanel == A || SelectedLeafPanel == B ? parent : SelectedLeafPanel;
+        parent.MergeChildren();
     }
 
     private DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
@@ -70,7 +82,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         {
             foreach (var editorTabName in layoutTree.dockedTabs)
             {
-                var editorTab = CreateEditorTab(editorTabName, panelComponent);
+                var editorTab = InstantiateEditorTab(editorTabName, panelComponent);
                 if (!editorTab) Debug.LogError($"Failed to create {editorTabName} tab. Check the Prefab for a missing {editorTabName} component");
             }
         }
@@ -93,11 +105,11 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         if (tab) return tab;
         var containerPanel = SelectedLeafPanel;
         if (!containerPanel) return null; //exit if no leaf panel is selected
-        tab = CreateEditorTab(editorTabTypeName, containerPanel);
+        tab = InstantiateEditorTab(editorTabTypeName, containerPanel);
         return tab;
     }
 
-    public void DestroyPanelInstances()
+    public void DestroyAllPanelInstances()
     {
         if (!rootPanel)
             return;
@@ -105,27 +117,31 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         rootPanel = null;
     }
 
-    private EditorTab CreateEditorTab(string editorTabName, DynamicPanel panel)
+
+    #endregion
+
+    #region Prefab_Instantiation    
+    public DynamicPanel InstantiateDynamicPanel(Transform parent) => Instantiate(dynamicPanelTemplate, parent).GetComponent<DynamicPanel>();
+    public EditorTab InstantiateEditorTab(string editorTabName, DynamicPanel panel)
     {
         //Instantiate Editor
         var editorTabPrefab = EditorTabRegistry.GetPrefab(editorTabName);
         if (editorTabPrefab == null)
             return null;
-        var editorInstance = GameObject.Instantiate(editorTabPrefab, panel.editorTabContentContainer.transform);
+        var editorInstance = GameObject.Instantiate(editorTabPrefab);
         var editorTab = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
         var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorTabName);
-        editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabDescriptor, editorTab, panel));
-        panel.AppendTab(editorTab);
+        editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabDescriptor, editorTab));
+        panel.MoveEditorTabToThis(editorTab);
         return editorTab;
     }
-
-    private EditorTabLabel InstantiateEditorTabLabel((string, Sprite) tabInfo, EditorTab tab, DynamicPanel panel)
+    private EditorTabLabel InstantiateEditorTabLabel((string, Sprite) tabInfo, EditorTab tab)
     {
-        if (tabInfo.Item1 == null || !panel)
+        if (tabInfo.Item1 == null)
             return null;
-        var tabLabelInstance = Instantiate(editorTabLabelTemplate, panel.editorTabLabelContainer.transform);
+        var tabLabelInstance = Instantiate(editorTabLabelTemplate);
         var tabLabel = tabLabelInstance.GetComponent<EditorTabLabel>();
         if (!tabLabel)
             return null;

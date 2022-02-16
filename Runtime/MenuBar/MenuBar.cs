@@ -177,8 +177,7 @@ public class MenuBar : MonoBehaviour
         var text = optionInstance.GetComponentInChildren<Text>();
         text.text = key;
         var button = optionInstance.GetComponent<Button>();
-        button.onClick.AddListener(callback);
-        button.onClick.AddListener(() => button.SendMessageUpwards("CloseOptions"));
+        button.onClick.AddListener(() => { callback(); button.SendMessageUpwards("CloseOptions"); });
     }
 
     private struct Node
