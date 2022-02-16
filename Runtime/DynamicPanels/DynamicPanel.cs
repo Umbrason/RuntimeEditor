@@ -148,7 +148,10 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         if (!tabLabel) return;
         var tab = tabLabel.Tab;
         var oldPanel = tab.CurrentPanel;
-        MoveEditorTabToThis(tabLabel.Tab);
+        var worldSpaceRect = new Rect(RectTransform.rect.position + (Vector2)RectTransform.position, RectTransform.rect.size);
+        var localPosition = (eventData.position - worldSpaceRect.position);
+        var index = TabIndexFromLocalX(localPosition.x);
+        MoveEditorTabToThis(tabLabel.Tab, index);
         if (!oldPanel)
             return;
         if (oldPanel.IsLeaf && oldPanel.DockedTabs.Length == 0)
@@ -185,7 +188,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
     #endregion
 
     #region UI previewing
-    TODO>>//Mimic this in the actual drop behaviour of TabLabels on the TabLabelBar
+    //Mimic this in the actual drop behaviour of TabLabels on the TabLabelBar
     private void TryPreviewTabLabelPosition(PointerEventData eventData)
     {
         var label = eventData.pointerDrag?.GetComponent<EditorTabLabel>();
@@ -407,16 +410,24 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
 
     #region Editor Tab Management
     ///<summary>Add new EditorTab to this panel</summary>
-    public void MoveEditorTabToThis(EditorTab tab)
+    public void MoveEditorTabToThis(EditorTab tab, int targetIndex = -1)
     {
         if (!tab || HasChildren)
             return;
+        targetIndex = targetIndex < 0 ? DockedTabs.Length : targetIndex;
+        var previouslySelectedTab = SelectedTab;
         tab.CurrentPanel?.DetachTab(tab);
-        editorTabs.Add(tab);
-        tab.Label.transform.SetParent(null);
+        if (targetIndex < editorTabs.Count)
+            editorTabs.Insert(targetIndex, tab);
+        else
+            editorTabs.Add(tab);
+        selectedTab = previouslySelectedTab ? editorTabs.IndexOf(previouslySelectedTab) : 0;
+        
         tab.Label.transform.SetParent(editorTabLabelContainer.transform);
         tab.transform.SetParent(editorTabContentContainer.transform);
         tab.RegisterNewParentPanel(this);
+        for (int i = 0; i < editorTabs.Count; i++)
+            editorTabs[i].Label.transform.SetSiblingIndex(i);
     }
 
     private void DetachTab(EditorTab tab)
