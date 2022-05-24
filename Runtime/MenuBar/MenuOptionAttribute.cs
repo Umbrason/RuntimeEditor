@@ -11,8 +11,7 @@ using System;
         public Category category;
         public enum Category
         {
-            Default, Project, Layout, Assets
-
+            Default, Project, Layout, Assets, Tabs
         }
         public MenuOption(Category category, string key)
         {
