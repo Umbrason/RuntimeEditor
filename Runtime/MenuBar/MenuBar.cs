@@ -12,7 +12,6 @@ public class MenuBar : MonoBehaviour
     private static MenuBar m_Singleton;
     public static MenuBar Singleton { get { return m_Singleton; } }
 
-    private bool expanded;
     public Transform content;
     private Queue<GameObject> categoryInstances = new Queue<GameObject>();
     public GameObject optionTemplate, categoryTemplate, groupTemplate;
