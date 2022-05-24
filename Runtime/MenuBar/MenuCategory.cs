@@ -16,7 +16,10 @@ public class MenuCategory : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        ShowOptions();
+        if (IsContentSelfActive)
+            CloseOptions();
+        else
+            ShowOptions();
     }
 
     void Update()
