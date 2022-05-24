@@ -45,7 +45,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         layoutTree.splitOrientation = panel.SplitOrientation;
         layoutTree.splitPosition = panel.SplitPercent;
         if (!panel.HasChildren)
-            layoutTree.dockedTabs = panel.DockedTabNames;
+            layoutTree.dockedTabs = panel.DockedTabTypes;
         else
         {
             layoutTree.childA = GetLayoutFromDynamicPanel(panel.ChildA);
@@ -80,10 +80,10 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         var panelComponent = GO.GetComponent<DynamicPanel>();
         if (layoutTree.IsLeaf)
         {
-            foreach (var editorTabName in layoutTree.dockedTabs)
+            foreach (var editorTabType in layoutTree.dockedTabs)
             {
-                var editorTab = InstantiateEditorTab(editorTabName, panelComponent);
-                if (!editorTab) Debug.LogError($"Failed to create {editorTabName} tab. Check the Prefab for a missing {editorTabName} component");
+                var editorTab = InstantiateEditorTab(editorTabType, panelComponent);
+                if (!editorTab) Debug.LogError($"Failed to create {editorTabType} tab. Check the Prefab for a missing {editorTabType} component");
             }
         }
         else if (layoutTree.childA != null && layoutTree.childB != null) //Instantiate children recursive
@@ -99,13 +99,13 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     #endregion
 
     #region Tab Creation/Destruction
-    public EditorTab GetOrCreateTab(string editorTabTypeName)
+    public EditorTab GetOrCreateTab(Type editorTabType)
     {
-        var tab = rootPanel?.GetEditorTabInChildren(editorTabTypeName);
+        var tab = rootPanel?.GetEditorTabInChildren(editorTabType);
         if (tab) return tab;
         var containerPanel = SelectedLeafPanel;
         if (!containerPanel) return null; //exit if no leaf panel is selected
-        tab = InstantiateEditorTab(editorTabTypeName, containerPanel);
+        tab = InstantiateEditorTab(editorTabType, containerPanel);
         return tab;
     }
 
@@ -122,17 +122,17 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     #region Prefab_Instantiation    
     public DynamicPanel InstantiateDynamicPanel(Transform parent) => Instantiate(dynamicPanelTemplate, parent).GetComponent<DynamicPanel>();
-    public EditorTab InstantiateEditorTab(string editorTabName, DynamicPanel panel)
+    public EditorTab InstantiateEditorTab(Type editorTabType, DynamicPanel panel)
     {
         //Instantiate Editor
-        var editorTabPrefab = EditorTabRegistry.GetPrefab(editorTabName);
+        var editorTabPrefab = EditorTabRegistry.GetPrefab(editorTabType);
         if (editorTabPrefab == null)
             return null;
         var editorInstance = GameObject.Instantiate(editorTabPrefab);
         var editorTab = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
-        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorTabName);
+        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorTabType);
         editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabDescriptor, editorTab));
         panel.MoveEditorTabToThis(editorTab);
         return editorTab;

@@ -13,6 +13,7 @@
   "dependencies": {
 
     "com.umbrason.runtimeserialization" : "1.0.0",
+    "com.umbrason.scriptableobjectlibraries" : "1.0.0",
     "com.umbrason.themedui" : "1.0.0"
   }
 }

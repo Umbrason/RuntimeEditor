@@ -45,7 +45,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
     #endregion
 
     #region Getter Properties
-    public string[] DockedTabNames { get { return DockedTabs.Select((x) => x.GetType().Name).ToArray(); } }
+    public Type[] DockedTabTypes { get { return DockedTabs.Select((x) => x.GetType()).ToArray(); } }
     public DynamicPanel Sibling { get { return Parent ? Parent.ChildA == this ? Parent.ChildB : Parent.ChildA : null; } }
     private (DynamicPanel, DynamicPanel) children;
     public DynamicPanel ChildA { get { return children.Item1; } }
@@ -287,12 +287,12 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         return PanelRegion.Center;
     }
 
-    public EditorTab GetEditorTab(string typeName) => editorTabs.Where(x => x.GetType().Name == typeName).SingleOrDefault();
-    public EditorTab GetEditorTabInChildren(string typeName)
+    public EditorTab GetEditorTab(Type type) => editorTabs.Where(x => x.GetType() == type).SingleOrDefault();
+    public EditorTab GetEditorTabInChildren(Type type)
     {
-        if (IsLeaf) return GetEditorTab(typeName);
-        var childATab = ChildA.GetEditorTabInChildren(typeName);
-        return childATab ? childATab : ChildB.GetEditorTabInChildren(typeName);
+        if (IsLeaf) return GetEditorTab(type);
+        var childATab = ChildA.GetEditorTabInChildren(type);
+        return childATab ? childATab : ChildB.GetEditorTabInChildren(type);
     }
     #endregion
 

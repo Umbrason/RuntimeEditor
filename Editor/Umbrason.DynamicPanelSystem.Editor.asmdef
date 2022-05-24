@@ -1,8 +1,9 @@
 {
-    "name": "Umbrason.DynamicPanelSystem.Editor",
+    "name": "Umbrason.RuntimeEditor.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:c53ddf796deb6004f9f606b5ff9ef709",
+        "GUID:a34bd63156277a3419c81bf5223a8d44",
         "GUID:61a2fc443e47e634c89b74efda26bbe5",
         "GUID:d8472da68b0c42b4091c7626a0e372c1"
     ],

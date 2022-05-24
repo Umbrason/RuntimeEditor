@@ -1,9 +1,10 @@
 {
-    "name": "Umbrason.DynamicPanelSystem.Runtime",
+    "name": "Umbrason.RuntimeEditor.Runtime",
     "rootNamespace": "",
     "references": [
         "GUID:f7eae8c8c3028c24492d28a794f46bef",
-        "GUID:61a2fc443e47e634c89b74efda26bbe5"
+        "GUID:61a2fc443e47e634c89b74efda26bbe5",
+        "GUID:441c25f1ba416364dbc5663906f07a84"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
