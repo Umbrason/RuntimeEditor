@@ -125,30 +125,31 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     public EditorTab InstantiateEditorTab(Type editorTabType, DynamicPanel panel)
     {
         //Instantiate Editor
-        var editorTabPrefab = EditorTabRegistry.GetPrefab(editorTabType);
+        
+        var editorTabPrefab = EditorWindowPrefabLibrary.Instance?[editorTabType];
         if (editorTabPrefab == null)
             return null;
         var editorInstance = GameObject.Instantiate(editorTabPrefab);
         var editorTab = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
-        var editorTabDescriptor = EditorTabRegistry.GetDescriptor(editorTabType);
-        editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabDescriptor, editorTab));
+        var editorTabIcon = EditorWindowIconLibrary.Instance?[editorTabType];        
+        editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabType.Name, editorTabIcon, editorTab));
         panel.MoveEditorTabToThis(editorTab);
         return editorTab;
     }
-    private EditorTabLabel InstantiateEditorTabLabel((string, Sprite) tabInfo, EditorTab tab)
+    private EditorTabLabel InstantiateEditorTabLabel(string tabName, Sprite tabIcon, EditorTab tab)
     {
-        if (tabInfo.Item1 == null)
+        if (tabIcon == null)
             return null;
         var tabLabelInstance = Instantiate(editorTabLabelTemplate);
         var tabLabel = tabLabelInstance.GetComponent<EditorTabLabel>();
         if (!tabLabel)
             return null;
         var nameTextComponent = tabLabelInstance.GetComponentsInChildren<ThemedText>().FirstOrDefault((x => x.gameObject.name.ToLower().Contains("name")));
-        nameTextComponent.text = tabInfo.Item1;
+        nameTextComponent.text = tabName;
         var iconImageComponent = tabLabelInstance.GetComponentsInChildren<ThemedImage>().FirstOrDefault((x => x.gameObject.name.ToLower().Contains("icon")));
-        iconImageComponent.sprite = tabInfo.Item2;
+        iconImageComponent.sprite = tabIcon;
         return tabLabel;
     }
     #endregion
