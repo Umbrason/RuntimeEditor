@@ -126,14 +126,14 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     {
         //Instantiate Editor
         
-        var editorTabPrefab = EditorWindowPrefabLibrary.Instance?[editorTabType];
+        var editorTabPrefab = EditorTabPrefabLibrary.Instance?[editorTabType];
         if (editorTabPrefab == null)
             return null;
-        var editorInstance = GameObject.Instantiate(editorTabPrefab);
+        var editorInstance = GameObject.Instantiate(editorTabPrefab);        
         var editorTab = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
-        var editorTabIcon = EditorWindowIconLibrary.Instance?[editorTabType];        
+        var editorTabIcon = EditorTabIconLibrary.Instance?[editorTabType];        
         editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabType.Name, editorTabIcon, editorTab));
         panel.MoveEditorTabToThis(editorTab);
         return editorTab;

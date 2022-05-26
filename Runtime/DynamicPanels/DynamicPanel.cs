@@ -425,6 +425,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         
         tab.Label.transform.SetParent(editorTabLabelContainer.transform);
         tab.transform.SetParent(editorTabContentContainer.transform);
+        tab.transform.localScale = Vector3.one;
         tab.RegisterNewParentPanel(this);
         for (int i = 0; i < editorTabs.Count; i++)
             editorTabs[i].Label.transform.SetSiblingIndex(i);
