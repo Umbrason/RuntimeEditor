@@ -5,15 +5,8 @@ using System.Linq;
 using UnityEngine.EventSystems;
 using System;
 
-public class RuntimeEditorWindowManager : MonoBehaviour
+public class RuntimeEditor : MonoBehaviour
 {
-    #region Singleton Pattern
-    private static RuntimeEditorWindowManager m_singleton;
-    public static RuntimeEditorWindowManager Singleton { get { return m_singleton; } }
-    void OnEnable() => m_singleton = this;
-    void OnDisable() => m_singleton = m_singleton == this ? null : m_singleton;
-    #endregion
-
     [SerializeField] private GameObject dynamicPanelTemplate;
     [SerializeField] private GameObject editorTabLabelTemplate;
     [SerializeField] private GameObject viewportContainer;
@@ -25,18 +18,16 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     void Start() { rootPanel = InstantiateLayoutRecursive(new EditorLayoutTree(), ViewportTransform); SelectedLeafPanel = rootPanel; }
 
     #region (de)serialization
-    public static void LoadFromFile(string path)
+    public void LoadFromFile(string path)
     {
         if (!SerializationManager.TryDeserialize<EditorLayoutTree>(path, out EditorLayoutTree layout))
             return;
-        m_singleton?.SetLayoutFromLayoutTree(layout);
+        SetLayoutFromLayoutTree(layout);
     }
 
-    public static void SaveToFile(string path)
+    public void SaveToFile(string path)
     {
-        if (!m_singleton)
-            return;
-        SerializationManager.Serialize(GetLayoutFromDynamicPanel(m_singleton.rootPanel), path);
+        SerializationManager.Serialize(GetLayoutFromDynamicPanel(rootPanel), path);
     }
 
     private static EditorLayoutTree GetLayoutFromDynamicPanel(DynamicPanel panel)
@@ -60,11 +51,6 @@ public class RuntimeEditorWindowManager : MonoBehaviour
         rootPanel = InstantiateLayoutRecursive(layout, ViewportTransform);
     }
 
-    public void SplitPanelInTwo(DynamicPanel panel, EditorTab[] panelATabs, EditorTab[] panelBTabs, float splitPercent, SplitOrientation splitOrientation)
-    {
-        
-    }
-
     public void MergePanels(DynamicPanel A, DynamicPanel B)
     {
         if (A.Parent != B.Parent)
@@ -76,8 +62,7 @@ public class RuntimeEditorWindowManager : MonoBehaviour
 
     private DynamicPanel InstantiateLayoutRecursive(EditorLayoutTree layoutTree, Transform parent = null)
     {
-        var GO = Instantiate(dynamicPanelTemplate, parent);
-        var panelComponent = GO.GetComponent<DynamicPanel>();
+        var panelComponent = InstantiateDynamicPanel(parent);
         if (layoutTree.IsLeaf)
         {
             foreach (var editorTabType in layoutTree.dockedTabs)
@@ -121,19 +106,23 @@ public class RuntimeEditorWindowManager : MonoBehaviour
     #endregion
 
     #region Prefab_Instantiation    
-    public DynamicPanel InstantiateDynamicPanel(Transform parent) => Instantiate(dynamicPanelTemplate, parent).GetComponent<DynamicPanel>();
+    public DynamicPanel InstantiateDynamicPanel(Transform parent)
+      => Instantiate(dynamicPanelTemplate, parent)
+        .GetComponent<DynamicPanel>()
+        .WithRuntimeEditor(this);
+
     public EditorTab InstantiateEditorTab(Type editorTabType, DynamicPanel panel)
     {
         //Instantiate Editor
-        
+
         var editorTabPrefab = EditorTabPrefabLibrary.Instance?[editorTabType];
         if (editorTabPrefab == null)
             return null;
-        var editorInstance = GameObject.Instantiate(editorTabPrefab);        
+        var editorInstance = GameObject.Instantiate(editorTabPrefab);
         var editorTab = editorInstance.GetComponent<EditorTab>();
 
         //Instantiate Label
-        var editorTabIcon = EditorTabIconLibrary.Instance?[editorTabType];        
+        var editorTabIcon = EditorTabIconLibrary.Instance?[editorTabType];
         editorTab.RegisterTabLabel(InstantiateEditorTabLabel(editorTabType.Name, editorTabIcon, editorTab));
         panel.MoveEditorTabToThis(editorTab);
         return editorTab;

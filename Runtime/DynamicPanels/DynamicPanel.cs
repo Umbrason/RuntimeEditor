@@ -29,6 +29,9 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
     #endregion
 
     #region Cached Components 
+    private RuntimeEditor ownerEditor;
+    public DynamicPanel WithRuntimeEditor(RuntimeEditor runtimeEditor) { ownerEditor = runtimeEditor; return this; }
+
     private LayoutElement cached_LayoutElement;
     public LayoutElement LayoutElement { get { return cached_LayoutElement ??= GetComponent<LayoutElement>(); } }
 
@@ -166,7 +169,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         Split(splitTab, splitRegion);
     }
 
-    public void OnPointerClick(PointerEventData eventData) => RuntimeEditorWindowManager.Singleton.SelectedLeafPanel = this.IsLeaf ? this : RuntimeEditorWindowManager.Singleton.SelectedLeafPanel;
+    public void OnPointerClick(PointerEventData eventData) => ownerEditor.SelectedLeafPanel = this.IsLeaf ? this : ownerEditor.SelectedLeafPanel;
     ///<summary>handles dragging between panels to change split postion</summary>
     public void OnDrag(PointerEventData eventData)
     {
@@ -328,6 +331,7 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         viewportContainer.SetActive(true);
     }
 
+    //TODO: move this into RuntimeEditor.cs
     private void Split(EditorTab splitTab, PanelRegion splitRegion)
     {
         if (!IsLeaf)
@@ -352,14 +356,14 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         var tabsB = oldContentRemainsInTabA ? new EditorTab[] { splitTab } : otherTabs;
 
         var selectedTab = SelectedTab;
-        var newPanelA = RuntimeEditorWindowManager.Singleton.InstantiateDynamicPanel(childContainer.transform);
-        var newPanelB = RuntimeEditorWindowManager.Singleton.InstantiateDynamicPanel(childContainer.transform);
+        var newPanelA = ownerEditor.InstantiateDynamicPanel(childContainer.transform);
+        var newPanelB = ownerEditor.InstantiateDynamicPanel(childContainer.transform);
         foreach (var tab in tabsA) newPanelA.MoveEditorTabToThis(tab);
         foreach (var tab in tabsB) newPanelB.MoveEditorTabToThis(tab);
         newPanelA.SelectedTab = selectedTab;
         newPanelB.SelectedTab = selectedTab;
-        if (RuntimeEditorWindowManager.Singleton.SelectedLeafPanel == this)
-            RuntimeEditorWindowManager.Singleton.SelectedLeafPanel = newPanelA.DockedTabs.Contains(selectedTab) ? newPanelA : newPanelB;
+        if (ownerEditor.SelectedLeafPanel == this)
+            ownerEditor.SelectedLeafPanel = newPanelA.DockedTabs.Contains(selectedTab) ? newPanelA : newPanelB;
         SetChildren(newPanelA, newPanelB, splitOrientation, splitPercent);
     }
     public void MergeWithSibling() => parent?.MergeChildren();
@@ -381,8 +385,8 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         foreach (var tab in childA.DockedTabs.Concat(childB.DockedTabs))
             MoveEditorTabToThis(tab);
 
-        var selectedPanel = RuntimeEditorWindowManager.Singleton.SelectedLeafPanel; //cache selected panel
-        RuntimeEditorWindowManager.Singleton.SelectedLeafPanel = selectedPanel == childA || selectedPanel == childB ? this : selectedPanel; //set selected panel to this panel if a child was selected previously
+        var selectedPanel = ownerEditor.SelectedLeafPanel; //cache selected panel
+        ownerEditor.SelectedLeafPanel = selectedPanel == childA || selectedPanel == childB ? this : selectedPanel; //set selected panel to this panel if a child was selected previously
 
         Destroy(childA.gameObject);
         Destroy(childB.gameObject);
@@ -396,8 +400,8 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         var nonLeafChild = leafChild.Sibling;
         SetChildren(nonLeafChild.ChildA, nonLeafChild.ChildB, nonLeafChild.SplitOrientation, nonLeafChild.SplitPercent);
         var fallbackLeafPanel = LeafPanels[0];
-        var selectedPanel = RuntimeEditorWindowManager.Singleton.SelectedLeafPanel; //cache selected panel
-        RuntimeEditorWindowManager.Singleton.SelectedLeafPanel = selectedPanel == leafChild ? fallbackLeafPanel : selectedPanel; //set selected panel to fallback leaf panel if a child was selected previously
+        var selectedPanel = ownerEditor.SelectedLeafPanel; //cache selected panel
+        ownerEditor.SelectedLeafPanel = selectedPanel == leafChild ? fallbackLeafPanel : selectedPanel; //set selected panel to fallback leaf panel if a child was selected previously
 
         foreach (var tab in leafChild.DockedTabs)
             fallbackLeafPanel.MoveEditorTabToThis(tab);
@@ -422,13 +426,14 @@ public class DynamicPanel : MonoBehaviour, IDragHandler, IPointerClickHandler
         else
             editorTabs.Add(tab);
         selectedTab = previouslySelectedTab ? editorTabs.IndexOf(previouslySelectedTab) : 0;
-        
+
         tab.Label.transform.SetParent(editorTabLabelContainer.transform);
         tab.transform.SetParent(editorTabContentContainer.transform);
         tab.transform.localScale = Vector3.one;
         tab.RegisterNewParentPanel(this);
         for (int i = 0; i < editorTabs.Count; i++)
             editorTabs[i].Label.transform.SetSiblingIndex(i);
+        SelectTab(tab);
     }
 
     private void DetachTab(EditorTab tab)

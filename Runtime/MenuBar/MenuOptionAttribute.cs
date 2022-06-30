@@ -5,7 +5,7 @@ using System;
 
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class MenuOption : Attribute
+    public class MenuBarOption : Attribute
     {
         public string key;        
         public Category category;
@@ -13,7 +13,7 @@ using System;
         {
             Default, Project, Layout, Assets, Tabs
         }
-        public MenuOption(Category category, string key)
+        public MenuBarOption(Category category, string key)
         {
             this.key = key;
             this.category = category;
