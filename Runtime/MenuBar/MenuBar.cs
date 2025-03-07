@@ -58,7 +58,6 @@ namespace Game.Editor
                 var runtimeMenuOptionAttribute = menuUptionAttributes.SingleOrDefault();
                 var key = runtimeMenuOptionAttribute.key;
                 var category = runtimeMenuOptionAttribute.category;
-
                 UnityAction callback = () => method.Invoke(null, null);
                 AddOption(key, category, callback);
             }
